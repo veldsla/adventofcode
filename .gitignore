@@ -1,3 +1,5 @@
+# vim
+*.sw?
 # Compiled files
 *.o
 *.so
