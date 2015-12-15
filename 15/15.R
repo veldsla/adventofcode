@@ -3,10 +3,6 @@ read.delim("15_in.txt", header=F, sep=" ")->d
 df <- data.frame(what=sub(":","",d$V1), capacity=as.numeric(sub(",", "", d$V3)), durability=as.numeric(sub(",", "", d$V5)), flavor=as.numeric(sub(",", "", d$V7)), texture=as.numeric(sub(",","", d$V9)), calories = as.numeric(sub(",","", d$V11)))
 
 
-score <- function(t, n) {
-	sum(replace(t, t<0, 0)) * n
-}
-
 m <- as.matrix(df[,2:5])
 
 max <- 0;
