@@ -14,9 +14,12 @@ fn perm_fill(v: Vec<i32>, remaining: i32, level: i32, rescounter: &mut BTreeMap<
             subv.push(*x);
         }
     }
+
+    //if we don't want all permutations we could check
+    //level vs min key in rescounter and avoid some calculations
     loop {
         match subv.pop() {
-            Some(v) => sum += perm_fill(subv.clone(), remaining -v, level + 1, rescounter),
+            Some(v)  => sum += perm_fill(subv.clone(), remaining -v, level + 1, rescounter),
             None => break
         }
     }
