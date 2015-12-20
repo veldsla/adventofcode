@@ -151,7 +151,10 @@ fn main() {
     println!("The value of a is {}", signal_a);
 
     circuit.reset();
-    circuit.add_connection("3176 -> b");
+    //set b to value measured at a
+    let mut newb = signal_a.to_string();
+    newb.push_str(" -> b");
+    circuit.add_connection(newb.as_ref());
     println!("The value of a after setting b to 3176 is {}", circuit.get_wire_value("a".to_string()));
 }
 
