@@ -87,10 +87,6 @@ impl Computer {
                     }
                 },
             };
-            if self.done() {
-                println!("Program end");
-                break;
-            }
         }
     }
 
@@ -167,7 +163,7 @@ fn main() {
     computer.reset();
     computer.reg_a = 1;
     computer.run_program();
-    println!("The value in register b (when reg_a starting with 1) is {}", computer.reg_b);
+    println!("The value in register b (reg_a starting with 1) is {}", computer.reg_b);
 }
 
 #[test]
