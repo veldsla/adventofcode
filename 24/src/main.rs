@@ -6,7 +6,7 @@ use std::collections::BTreeMap;
 use std::u64::MAX;
 use core::num::wrapping::OverflowingOps;
 
-fn qe(v: &Vec<u32>) -> u64 {
+fn qe(v: &Set) -> u64 {
     let mut  mul = 1;
     for e in v {
         let (res, o) = mul.overflowing_mul(*e as u64);
@@ -19,13 +19,13 @@ fn qe(v: &Vec<u32>) -> u64 {
     mul
 }
 
-fn weight(v: &Vec<u32>) -> u32 {
+fn weight(v: &Set) -> u32 {
     v.iter().fold(0, |sum , x| sum + *x)
 }
 
 type Set=Vec<u32>;
 
-fn perm_fill(used: Vec<u32>, avail: Vec<u32>, remaining: u32, wantlevel: usize, resset: &mut BTreeMap<u64,Vec<Set>>) {
+fn perm_fill(used: Set, avail: Set, remaining: u32, wantlevel: usize, resset: &mut BTreeMap<u64,Vec<Set>>) {
     //end rule
     if used.len() == wantlevel {
         if remaining == 0 {
@@ -39,7 +39,7 @@ fn perm_fill(used: Vec<u32>, avail: Vec<u32>, remaining: u32, wantlevel: usize, 
         }
     }
 
-    let mut subv = avail.iter().cloned().filter(|v| *v <= remaining).collect::<Vec<u32>>();
+    let mut subv = avail.iter().cloned().filter(|v| *v <= remaining).collect::<Set>();
     loop {
         match subv.pop() {
             Some(v)  => {
@@ -52,19 +52,19 @@ fn perm_fill(used: Vec<u32>, avail: Vec<u32>, remaining: u32, wantlevel: usize, 
     }
 }
 
-fn solve(vec: Vec<u32>, ngroups: u32, currentgroup: usize) -> bool {
-    //end rule
-    //println!("{}, {}, {}", ngroups, currentgroup, vec.len());
+fn solve(vec: Set, ngroups: u32, currentgroup: usize) -> bool {
+    //end rule if we get here wit a single group remaining we are ok
     if ngroups == 1 {
         return true;
     }
 
-    //we find the smallest set that gives us sum(vec) / ngroups weight
+    //we find the smallest sets that gives us sum(vec) / ngroups weight
     let total_weight = weight(&vec);
     let per_group = total_weight / ngroups;
     assert_eq!(per_group * ngroups, total_weight);
 
     //use 17b like algo to get the different groups of a given size that sum to: per_group
+    //increase set size if we fail
     for size in 1..vec.len() {
         let mut sets = BTreeMap::<u64, Vec<Set>>::new();
         perm_fill(Vec::new(), vec.clone(), per_group, size, &mut sets);
@@ -73,13 +73,13 @@ fn solve(vec: Vec<u32>, ngroups: u32, currentgroup: usize) -> bool {
         }
 
         //the BTreemap is ordered by QE start solving remainder for
-        //for nrgoups - 1
+        //for the calculated sets and nrgoups - 1
         for (qe, sets) in sets.iter() {
             for set in sets {
                 //if we can divide the remaining values in ngroups equally sized sets were done
-                //nast method to create remaing values vec
+                //nasty method to create remaing values vec
                 //no dups are present in test set so a filter action does the trick
-                let remain = vec.iter().cloned().filter(|x| !set.contains(&x)).collect::<Vec<u32>>();
+                let remain = vec.iter().cloned().filter(|x| !set.contains(&x)).collect::<Set>();
                 let res = solve(remain, ngroups - 1, currentgroup + 1);
                 if res {
                     if currentgroup == 1 {
