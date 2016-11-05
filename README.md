@@ -1,5 +1,5 @@
-# adventofcode2015
+# AdventOfCode
 
 http://adventofcode.com/
 
-Solutions in (beginners) rust
+Solutions in mostly rust
