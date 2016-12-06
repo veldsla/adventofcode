@@ -1,0 +1,5 @@
+d <- read.delim("input.txt", header=F, stringsAsFactors=F)
+l <- simplify2array(strsplit(d[,1],""))
+t <- apply(l,1,table)
+cat("6a:", paste(rownames(t)[apply(t,2,which.max)], collapse=""), "\n")
+cat("6b:", paste(rownames(t)[apply(t,2,which.min)], collapse=""), "\n")
