@@ -36,11 +36,10 @@ impl IPv7 {
     fn supports_tls(&self) -> bool {
         self.parts.iter().any(|p| p.windows(4).any(abba))
             && !self.hypernet_sequences.iter().any(|p| p.windows(4).any(abba))
-
     }
 
-    fn supports_ssl(&self) -> bool{
-        let abas: Vec<_> = self.parts.iter().flat_map(|p| {
+    fn supports_ssl(&self) -> bool {
+        self.parts.iter().flat_map(|p| {
             p.windows(3).filter_map(|s| {
                 if aba(s) {
                     Some(s)
@@ -48,9 +47,7 @@ impl IPv7 {
                     None
                 }
             })
-        }).collect();
-
-        abas.iter().any(|a| {
+        }).any(|a| {
             self.hypernet_sequences.iter().flat_map(|h| {
                 h.windows(3)
             }).any(|hs|{
