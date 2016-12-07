@@ -68,7 +68,6 @@ fn aba(s: &[u8]) -> bool {
 }
 
 fn abba(s: &[u8]) -> bool {
-    //println!("{}", std::str::from_utf8(s).unwrap());
     match s[0] != s[1] && s.len() == 4 {
         false => false,
         true => s[1] == s[2] && s[3] == s[0]
@@ -98,7 +97,7 @@ fn test_tls() {
 
 #[test]
 fn test_ssl() {
-    //assert!(IPv7::from("aba[bab]xyz").supports_ssl());
+    assert!(IPv7::from("aba[bab]xyz").supports_ssl());
     assert!(!IPv7::from("xyx[xyx]xyx").supports_ssl());
     assert!(IPv7::from("aaa[kek]eke").supports_ssl());
     assert!(IPv7::from("zazbz[bzb]cdb").supports_ssl());
