@@ -59,10 +59,6 @@ impl Screen {
         self.pixels[y*self.width + x] = to;
     }
 
-    fn get_pixel(&mut self, x: usize, y: usize) -> bool {
-        self.pixels[y*self.width + x]
-    }
-
     fn rect(&mut self, a: usize, b: usize) {
         for x in 0..a {
             for y in 0 ..b {
@@ -72,34 +68,28 @@ impl Screen {
     }
 
     fn rotate_row(&mut self, row: usize, amount: usize) {
-        let mut pos = row * self.width;
+        let pos = row * self.width;
         assert!(row < self.height);
-        let amount = amount % self.width;
+        let amount = self.width - amount % self.width;
 
-        let to_left: Vec<_> = self.pixels.iter().cloned()
-            .skip(pos + self.width - amount).take(amount).collect();
-        let to_right: Vec<_> = self.pixels.iter().cloned()
-            .skip(pos).take(self.width - amount).collect();
-        
-        for p in to_left.iter().chain(to_right.iter()) {
-            self.pixels[pos] = *p;
-            pos += 1;
-        }
+        self.pixels[pos..pos+amount].reverse();
+        self.pixels[pos+amount..pos+self.width].reverse();
+        self.pixels[pos..pos+self.width].reverse();
     }
 
     fn rotate_col(&mut self, col: usize, amount: usize) {
         assert!(col < self.width);
+
         let amount = amount % self.height;
+        let mut col_coords: Vec<usize> = (0..self.height).map(|r| r*self.width + col).collect();
+        let coord_values: Vec<bool> = col_coords.iter().map(|&c| self.pixels[c]).collect();
 
-        let col_coords: Vec<_> = (0..self.height).map(|r| r*self.width + col).collect();
+        col_coords[..amount].reverse();
+        col_coords[amount..].reverse();
+        col_coords.reverse();
 
-        let to_up: Vec<_> = col_coords.iter().map(|&c| self.pixels[c])
-            .skip(self.height - amount).take(amount).collect();
-        let to_down: Vec<_> = col_coords.iter().map(|&c| self.pixels[c])
-            .take(self.height - amount).collect();
-        
-        for (pos, p) in  col_coords.iter().zip(to_up.iter().chain(to_down.iter())) {
-            self.pixels[*pos] = *p;
+        for (c, v) in col_coords.into_iter().zip(coord_values.into_iter()) {
+            self.pixels[c] = v;
         }
     }
 
