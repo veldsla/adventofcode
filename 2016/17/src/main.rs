@@ -25,7 +25,6 @@ impl<'a>Maze<'a> {
         let mut next_queue = Vec::new();
 
         queue.push(Walk { x: x, y: y, path: String::from("") });
-        //let mut seen = HashSet::new();
 
         loop {
             while let Some(walk) = queue.pop() {
