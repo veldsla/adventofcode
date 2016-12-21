@@ -1,0 +1,7 @@
+[package]
+name = "21"
+version = "0.1.0"
+authors = ["Arno Velds <a.velds@nki.nl>"]
+
+[dependencies]
+permutohedron = "0.2"
