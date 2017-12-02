@@ -1,11 +1,10 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::ops::Sub;
 
 fn range_diff(v: &[i32]) -> Option<i32> {
     if let Some(max) = v.iter().max() {
         if let Some(min) = v.iter().min() {
-            return Some(max.sub(min));
+            return Some(max - min);
         }
     }
     None
