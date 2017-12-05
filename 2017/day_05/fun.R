@@ -24,6 +24,3 @@ while (p > 0 && p <= length(d)) {
 }
 cat("5b: Maze exit in", n, "steps\n")
 
-# optimization probably possible. All negavtive jumps are at the end. Biggest being the last (-681)
-# postive values will toggle between 3 and 4 mostly.
-
