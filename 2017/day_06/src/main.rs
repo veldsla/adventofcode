@@ -60,7 +60,7 @@ fn main() {
     let v: Vec<usize> = BufReader::new(f).lines().nth(0).unwrap().unwrap().split('\t').map(|s| s.parse().unwrap()).collect();
     let mut m = Mem::new(&v);
     let (n, i) = m.redistribute();
-    println!("Cycle detected after {} (6a) iterations, first occurence at cycle {} (6b)", n, n - i);
+    println!("Cycle detected after {} (6a) iterations, first occurence at cycle {},  Δ={} (6b)", n, i, n - i);
 }
 
 #[test]
