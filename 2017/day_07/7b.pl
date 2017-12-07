@@ -56,3 +56,5 @@ sub printsubtowers {
 	my ($wrong, $ok) = sort {scalar(@{$discsums{$a}}) <=> scalar(@{$discsums{$b}}) } keys %discsums;
 	printsubtowers($discsums{$wrong}->[0], $wrong - $ok)
 }
+
+# vim: ai ts=4 sts=4 et sw=4 ft=perl
