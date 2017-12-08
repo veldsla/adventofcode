@@ -13,14 +13,8 @@ impl Registers {
         self.0.entry(n.to_string()).or_insert(0)
     }
 
-    fn get(&self, n: &str) -> i32 {
-        self.0.get(n).cloned().unwrap_or(0)
-    }
-
     fn inc(&mut self, n: &str, val: i32) -> i32 {
-        let r = self.entry(n);
-        *r += val;
-        *r
+        self.dec(n, -val)
     }
 
     fn dec(&mut self, n: &str, val: i32) -> i32 {
@@ -49,7 +43,7 @@ fn main() {
         // 5 comparator
         // 6 value
     }).filter_map(|p| {
-        let a = reg.get(&p[4]);
+        let a = *reg.entry(&p[4]);
         let b: i32 = p[6].parse().unwrap();
         let pass = match p[5].as_str() {
             "==" => a == b,
