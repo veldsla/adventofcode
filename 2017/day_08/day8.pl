@@ -8,9 +8,9 @@ my %registers = ();
 my $max = 0;
 while (my $line = <>) {
 	chomp $line;
-	$line =~ m/(\w+) (inc|dec) (-?\d+) if (.*)/ or die "Error parsing line: $line\n";
+	$line =~ m/(\w+) (inc|dec) (-?\d+) if (\w+ ([!=><]+) -?\d+)/ or die "Error parsing line: $line\n";
 	$registers{$1} += ($2 eq "inc" ? $3: -1 * $3) if testguard($4);
-	$max = $registers{$1} if $registers{$1} > $max;
+	$max = $registers{$1} if exists $registers{$1} && $registers{$1} > $max;
 }
 
 my @skeys = sort {$registers{$b} <=> $registers{$a}} keys %registers;
@@ -18,9 +18,6 @@ print "Largest value is $registers{$skeys[0]} in register $skeys[0], maximum val
 
 sub testguard {
 	my $fun = shift;
-	$fun =~ s/^(\w+)/\(\$registers{$1} \/\/ 0)/;
+	$fun =~ s/^(\w+)/(\$registers{$1} \/\/ 0)/;
 	return eval $fun
 }
-
-
-
