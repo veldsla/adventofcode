@@ -6,9 +6,6 @@ fn score_groups_rec(it: &mut std::str::Chars, group_value: u32) -> (u32, u32) {
     let mut garbage = 0;
     while let Some(c) = it.next() {
         match c {
-            '!' => {
-                let _ = it.next();
-            },
             '<' => {
                 //garbage until '>'
                 while let Some(g) = it.next() {
