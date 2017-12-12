@@ -15,7 +15,7 @@ print "12a: ", scalar(keys %$seen), " programs can be reached from 0\n";
 
 my $groups = 1;
 foreach (keys %mesh) {
-		++$groups && connected_from($_, $seen) unless exists $seen->{$_}
+	++$groups && connected_from($_, $seen) unless exists $seen->{$_};
 }
 print "12b: There are $groups program groups \n";
 
@@ -27,11 +27,9 @@ sub connected_from {
 		my $id = shift(@queue);
 		$skip->{$id} = 1;
 		for my $target (@{$mesh{$id}}) {
-			push (@queue, $target) unless exists $skip->{$target};
+			push @queue, $target unless exists $skip->{$target};
 
 		}
 	}
 	return $skip;
 }
-
-
