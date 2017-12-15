@@ -40,7 +40,7 @@ fn main() {
     let gen_b = Generator { value : 190, factor: 48271};
     let matches: u32 = gen_a.take(40_000_000).zip(gen_b)
         .map(|(a, b)| {
-            if a ^ b == 0 || (a ^ b) % 65536 == 0 {
+            if (a ^ b) % 65536 == 0 {
                 1
             } else {
                 0
@@ -52,7 +52,7 @@ fn main() {
     let gen_b = Generator { value : 190, factor: 48271};
     let matches: u32 = gen_a.into_picky(4).take(5_000_000).zip(gen_b.into_picky(8))
         .map(|(a, b)| {
-            if a ^ b == 0 || (a ^ b) % 65536 == 0 {
+            if (a ^ b) % 65536 == 0 {
                 1
             } else {
                 0
