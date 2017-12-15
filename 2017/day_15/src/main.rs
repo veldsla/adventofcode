@@ -38,26 +38,14 @@ impl Iterator for PickyGenerator {
 fn main() {
     let gen_a = Generator { value : 516, factor: 16807};
     let gen_b = Generator { value : 190, factor: 48271};
-    let matches: u32 = gen_a.take(40_000_000).zip(gen_b)
-        .map(|(a, b)| {
-            if (a ^ b) % 65536 == 0 {
-                1
-            } else {
-                0
-            }
-        }).sum();
+    let matches = gen_a.take(40_000_000).zip(gen_b)
+        .filter(|&(a, b)| (a ^ b) % 65536 == 0).count();
     println!("15a: Generators produce {} matches in 40M iterations", matches);
 
     let gen_a = Generator { value : 516, factor: 16807};
     let gen_b = Generator { value : 190, factor: 48271};
-    let matches: u32 = gen_a.into_picky(4).take(5_000_000).zip(gen_b.into_picky(8))
-        .map(|(a, b)| {
-            if (a ^ b) % 65536 == 0 {
-                1
-            } else {
-                0
-            }
-        }).sum();
+    let matches = gen_a.into_picky(4).take(5_000_000).zip(gen_b.into_picky(8))
+        .filter(|&(a, b)|(a ^ b) % 65536 == 0 ).count();
     println!("15b: Picky generators produce {} matches in 5M iterations", matches);
 }
 
