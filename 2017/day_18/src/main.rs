@@ -117,7 +117,6 @@ impl Computer {
 
     fn run_program(&mut self) -> Option<Register> {
         loop {
-            //println!("{}", self.current_address);
             if self.done() {
                 return None;
             }
@@ -232,7 +231,7 @@ fn main() {
             break;
         }
     }
-    println!("The last played sound? is {}", computer.send_queue.back().unwrap());
+    println!("18a: The last played sound? is {}", computer.send_queue.back().unwrap());
 
     let mut rec_count = 0;
     let mut receive_here_from_b = computer_a.run_program();
@@ -274,7 +273,7 @@ fn main() {
             }
         }
     }
-    println!("Program 2 sent {} times before the deadlock/exit occurred", rec_count);
+    println!("18b: Program 2 sent {} times before the deadlock/exit occurred", rec_count);
 
 }
 
