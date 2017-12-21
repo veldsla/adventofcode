@@ -25,9 +25,8 @@ readrules <- function(f) {
 	rules
 }
 
-do <- function(it=5) {
-	art <- ".#...####"
-	m <- as_mat(art)
+do <- function(it=5, start=".#...####", rules) {
+	m <- as_mat(start)
 	for (i in 1:it) {
 		size <- ncol(m)
 		if (size %% 2 == 0) {
@@ -60,5 +59,5 @@ do <- function(it=5) {
 }
 
 rules <- readrules("input.txt");
-cat("21a:", do(it=5), "are on after 5 iterations\n")
-cat("21b:", do(it=18), "are on after 18 iterations\n")
+cat("21a:", do(it=5, rules=rules), "are on after 5 iterations\n")
+cat("21b:", do(it=18, rules=rules), "are on after 18 iterations\n")
