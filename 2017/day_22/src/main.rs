@@ -10,6 +10,7 @@ impl From<(i32, i32)> for Coord {
         Coord((t.0,t.1))
     }
 }
+
 #[derive(Debug)]
 enum Direction {
     Up,
@@ -55,7 +56,6 @@ impl Direction {
             &Direction::Left => Direction::Right,
             &Direction::Right => Direction::Left
         }
-
     }
 }
 
@@ -68,7 +68,6 @@ impl Coord {
             &Direction::Right => (self.0).0 += 1
         }
     }
-    
 }
 
 #[derive(Debug, Clone)]
@@ -132,15 +131,12 @@ impl Grid {
         infected
     }
 
-
     fn middle(&self) -> Coord {
         let m = self.0.keys().map(|&Coord((x,y))| std::cmp::max(x, y)).max().unwrap();
         debug_assert!(m % 2 == 0);
         let c = m / 2;
         Coord((c, c))
     }
-
-
 }
 
 fn main() {
