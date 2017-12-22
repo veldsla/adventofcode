@@ -21,6 +21,7 @@ enum Direction {
 
 #[derive(Debug, Clone, Copy)]
 enum Infection {
+    Clean,
     Weakened,
     Infected,
     Flagged,
@@ -91,23 +92,25 @@ impl Grid {
         let mut direction = Direction::Up;
         let mut infected = 0;
         for _ in 0..n {
-            if let Some(infection) = self.0.remove(&pos) {
-                match infection {
-                    Infection::Weakened => {
-                        self.0.insert(pos, Infection::Infected);
-                        infected +=1;
-                    },
-                    Infection::Infected => {
-                        self.0.insert(pos, Infection::Flagged);
-                        direction.turn(Direction::Right);
-                    },
-                    Infection::Flagged => {
-                        direction.reverse();
-                    },
+            let infection = self.0.entry(pos).or_insert(Infection::Clean);
+            match *infection {
+                Infection::Weakened => {
+                    *infection = Infection::Infected;
+                    //self.0.insert(pos, Infection::Infected);
+                    infected +=1;
+                },
+                Infection::Infected => {
+                    *infection = Infection::Flagged;
+                    direction.turn(Direction::Right);
+                },
+                Infection::Flagged => {
+                    *infection = Infection::Clean;
+                    direction.reverse();
+                },
+                Infection::Clean => {
+                    *infection = Infection::Weakened;
+                    direction.turn(Direction::Left);
                 }
-            } else {
-                direction.turn(Direction::Left);
-                self.0.insert(pos, Infection::Weakened);
             }
             pos.go(&direction);
         }
