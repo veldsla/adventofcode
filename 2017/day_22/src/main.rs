@@ -27,34 +27,34 @@ enum Infection {
 }
 
 impl Direction {
-    fn turn(&self, d: Direction) -> Direction {
+    fn turn(&mut self, d: Direction) {
         match d {
             Direction::Left => {
                 match *self {
-                    Direction::Up => Direction::Left,
-                    Direction::Down => Direction::Right,
-                    Direction::Left => Direction::Down,
-                    Direction::Right => Direction::Up
+                    Direction::Up => *self = Direction::Left,
+                    Direction::Down => *self = Direction::Right,
+                    Direction::Left => *self = Direction::Down,
+                    Direction::Right => *self = Direction::Up
                 }
             },
             Direction::Right => {
                 match *self {
-                    Direction::Up => Direction::Right,
-                    Direction::Down => Direction::Left,
-                    Direction::Left => Direction::Up,
-                    Direction::Right => Direction::Down
+                    Direction::Up => *self = Direction::Right,
+                    Direction::Down => *self = Direction::Left,
+                    Direction::Left => *self = Direction::Up,
+                    Direction::Right => *self =  Direction::Down
                 }
             },
             _ => panic!("Cannot turn up or down")
         }
     }
 
-    fn reverse(&self) -> Direction {
+    fn reverse(&mut self) {
         match *self {
-            Direction::Up => Direction::Down,
-            Direction::Down => Direction::Up,
-            Direction::Left => Direction::Right,
-            Direction::Right => Direction::Left
+            Direction::Up => *self = Direction::Down,
+            Direction::Down => *self = Direction::Up,
+            Direction::Left => *self = Direction::Right,
+            Direction::Right => *self = Direction::Left
         }
     }
 }
@@ -99,14 +99,14 @@ impl Grid {
                     },
                     Infection::Infected => {
                         self.0.insert(pos, Infection::Flagged);
-                        direction = direction.turn(Direction::Right);
+                        direction.turn(Direction::Right);
                     },
                     Infection::Flagged => {
-                        direction = direction.reverse();
+                        direction.reverse();
                     },
                 }
             } else {
-                direction = direction.turn(Direction::Left);
+                direction.turn(Direction::Left);
                 self.0.insert(pos, Infection::Weakened);
             }
             pos.go(&direction);
@@ -120,9 +120,9 @@ impl Grid {
         let mut infected = 0;
         for _ in 0..n {
             if self.0.remove(&pos).is_some() {
-                direction = direction.turn(Direction::Right);
+                direction.turn(Direction::Right);
             } else {
-                direction = direction.turn(Direction::Left);
+                direction.turn(Direction::Left);
                 self.0.insert(pos, Infection::Infected);
                 infected +=1;
             }
