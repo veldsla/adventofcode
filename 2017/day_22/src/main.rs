@@ -18,7 +18,7 @@ enum Direction {
     Left,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 enum Infection {
     Weakened,
     Infected,
@@ -71,7 +71,7 @@ impl Coord {
     
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Grid(HashMap<Coord, Infection>);
 
 impl Grid {
@@ -87,7 +87,7 @@ impl Grid {
              }).collect()))
     }
 
-    fn infect(&mut self, n: usize) -> u32 {
+    fn infect_from_center(&mut self, n: usize) -> u32 {
         let mut pos = self.middle();
         let mut direction = Direction::Up;
         let mut infected = 0;
@@ -115,6 +115,24 @@ impl Grid {
         infected
     }
 
+    fn infect_simple_from_center(&mut self, n: usize) -> u32 {
+        let mut pos = self.middle();
+        let mut direction = Direction::Up;
+        let mut infected = 0;
+        for _ in 0..n {
+            if let Some(_) = self.0.remove(&pos) {
+                direction = direction.turn(Direction::Right);
+            } else {
+                direction = direction.turn(Direction::Left);
+                self.0.insert(pos.clone(), Infection::Infected);
+                infected +=1;
+            }
+            pos.go(&direction);
+        }
+        infected
+    }
+
+
     fn middle(&self) -> Coord {
         let m = self.0.keys().map(|&Coord((x,y))| std::cmp::max(x, y)).max().unwrap();
         debug_assert!(m % 2 == 0);
@@ -127,7 +145,10 @@ impl Grid {
 
 fn main() {
     let mut grid = Grid::from_file("input.txt").unwrap();
-    println!("22b: {} have been infected during 10M rounds", grid.infect(10_000_000));
+    println!("22a: {} have been infected during 10K rounds",
+             grid.clone().infect_simple_from_center(10_000));
+    println!("22b: {} have been infected during 10M rounds",
+             grid.infect_from_center(10_000_000));
 }
 
 #[test]
