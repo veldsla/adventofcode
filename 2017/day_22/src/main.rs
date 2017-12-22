@@ -11,7 +11,7 @@ impl From<(i32, i32)> for Coord {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 enum Direction {
     Up,
     Right,
@@ -30,19 +30,19 @@ impl Direction {
     fn turn(&self, d: Direction) -> Direction {
         match d {
             Direction::Left => {
-                match self {
-                    &Direction::Up => Direction::Left,
-                    &Direction::Down => Direction::Right,
-                    &Direction::Left => Direction::Down,
-                    &Direction::Right => Direction::Up
+                match *self {
+                    Direction::Up => Direction::Left,
+                    Direction::Down => Direction::Right,
+                    Direction::Left => Direction::Down,
+                    Direction::Right => Direction::Up
                 }
             },
             Direction::Right => {
-                match self {
-                    &Direction::Up => Direction::Right,
-                    &Direction::Down => Direction::Left,
-                    &Direction::Left => Direction::Up,
-                    &Direction::Right => Direction::Down
+                match *self {
+                    Direction::Up => Direction::Right,
+                    Direction::Down => Direction::Left,
+                    Direction::Left => Direction::Up,
+                    Direction::Right => Direction::Down
                 }
             },
             _ => panic!("Cannot turn up or down")
@@ -50,22 +50,22 @@ impl Direction {
     }
 
     fn reverse(&self) -> Direction {
-        match self {
-            &Direction::Up => Direction::Down,
-            &Direction::Down => Direction::Up,
-            &Direction::Left => Direction::Right,
-            &Direction::Right => Direction::Left
+        match *self {
+            Direction::Up => Direction::Down,
+            Direction::Down => Direction::Up,
+            Direction::Left => Direction::Right,
+            Direction::Right => Direction::Left
         }
     }
 }
 
 impl Coord {
     fn go(&mut self, d: &Direction) {
-        match d {
-            &Direction::Up => (self.0).1 -= 1,
-            &Direction::Down => (self.0).1 += 1,
-            &Direction::Left => (self.0).0 -= 1,
-            &Direction::Right => (self.0).0 += 1
+        match *d {
+            Direction::Up => (self.0).1 -= 1,
+            Direction::Down => (self.0).1 += 1,
+            Direction::Left => (self.0).0 -= 1,
+            Direction::Right => (self.0).0 += 1
         }
     }
 }
@@ -94,11 +94,11 @@ impl Grid {
             if let Some(infection) = self.0.remove(&pos) {
                 match infection {
                     Infection::Weakened => {
-                        self.0.insert(pos.clone(), Infection::Infected);
+                        self.0.insert(pos, Infection::Infected);
                         infected +=1;
                     },
                     Infection::Infected => {
-                        self.0.insert(pos.clone(), Infection::Flagged);
+                        self.0.insert(pos, Infection::Flagged);
                         direction = direction.turn(Direction::Right);
                     },
                     Infection::Flagged => {
@@ -107,7 +107,7 @@ impl Grid {
                 }
             } else {
                 direction = direction.turn(Direction::Left);
-                self.0.insert(pos.clone(), Infection::Weakened);
+                self.0.insert(pos, Infection::Weakened);
             }
             pos.go(&direction);
         }
@@ -119,11 +119,11 @@ impl Grid {
         let mut direction = Direction::Up;
         let mut infected = 0;
         for _ in 0..n {
-            if let Some(_) = self.0.remove(&pos) {
+            if self.0.remove(&pos).is_some() {
                 direction = direction.turn(Direction::Right);
             } else {
                 direction = direction.turn(Direction::Left);
-                self.0.insert(pos.clone(), Infection::Infected);
+                self.0.insert(pos, Infection::Infected);
                 infected +=1;
             }
             pos.go(&direction);
