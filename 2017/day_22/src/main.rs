@@ -148,7 +148,13 @@ fn main() {
 }
 
 #[test]
-fn test() {
+fn test_a() {
     let mut grid = Grid::from_file("test.txt").unwrap();
-    assert_eq!(grid.infect(10_000_000),2511944);
+    assert_eq!(grid.infect_simple_from_center(10_000),5587);
+}
+
+#[test]
+fn test_b() {
+    let mut grid = Grid::from_file("test.txt").unwrap();
+    assert_eq!(grid.infect_from_center(10_000_000),2511944);
 }
