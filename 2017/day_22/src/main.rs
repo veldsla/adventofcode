@@ -96,7 +96,6 @@ impl Grid {
             match *infection {
                 Infection::Weakened => {
                     *infection = Infection::Infected;
-                    //self.0.insert(pos, Infection::Infected);
                     infected +=1;
                 },
                 Infection::Infected => {
