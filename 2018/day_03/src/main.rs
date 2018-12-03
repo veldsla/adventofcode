@@ -74,7 +74,7 @@ impl Fabric {
 
     fn overlapping_m(&self) -> usize {
         let max_x = self.claims.iter().map(|c| c.x1).max().unwrap() as usize;
-        let max_y = self.claims.iter().map(|c| c.x1).max().unwrap() as usize;
+        let max_y = self.claims.iter().map(|c| c.y1).max().unwrap() as usize;
         let mut map = vec![0; max_x * max_y];
         self.claims.iter().for_each(|s| {
             s.points().for_each(|t| {
