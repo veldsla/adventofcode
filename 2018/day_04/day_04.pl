@@ -35,14 +35,8 @@ for (my $i = 0; $i <= $#data; $i++) {
 my @lazier = sort { sumsleep($parsed{$b}) <=> sumsleep($parsed{$a}) } keys %parsed;
 print "Laziest = $lazier[0]\n";
 #get the most slept minute
-my %minutemap;
-for my $s (@{$parsed{$lazier[0]}}) {
-	for my $t (@$s) {
-		$minutemap{$_}++ foreach $t->[0] .. $t->[1]-1
-	}
-}
 my $mm = minutemap($parsed{$lazier[0]});
-my @msm = sort {$mm->{$b} <=> $mm->{$a} } keys %minutemap;
+my @msm = sort {$mm->{$b} <=> $mm->{$a} } keys %$mm;
 print "Most slept minute $msm[0]\n";
 print "4a: ", $msm[0] * $lazier[0], "\n";
 
