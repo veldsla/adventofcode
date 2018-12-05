@@ -1,3 +1,4 @@
+use std::collections::BinaryHeap;
 use std::fs::File;
 use std::io::Read;
 
@@ -13,7 +14,7 @@ fn trim_units(s: &str, ignore: Option<char>) -> usize {
     //convert s to bytes
     let b: Vec<u8> = s.chars().map(|c| c as u8).collect();
 
-    //prepare the visit vec
+    //prepare the visit queue
     let mut keep: Vec<usize> = if let Some(rm) = ignore {
         let rmb = rm as u8;
         b.iter().enumerate()
@@ -24,33 +25,31 @@ fn trim_units(s: &str, ignore: Option<char>) -> usize {
                 } else {
                     Some(pos)
                 }
-            }).collect()
+            }).rev().collect()
 
     } else {
-        (0..b.len()).collect()
+        (0..b.len()).rev().collect()
     };
 
-    // the keep bookmark
-    let mut pos = 0;
-
-    while pos < keep.len() - 1 {
-        let pos1 = keep[pos];
-        let pos2 = keep[pos+1];
+    let mut visited = Vec::new();
+    while keep.len() > 1 {
+        let pos1 = keep.pop().unwrap();
+        let pos2 = keep.pop().unwrap();
 
         //xor-ing the bytes exposes the ascii case bit
         if b[pos1] ^ b[pos2] == 32 {
-            //this an opposite polarity pair
-            //remove from keep
-            keep.drain(pos..pos+2);
-            if pos > 0 {
-                pos -= 1;
+            // this an opposite polarity pair
+            // re-check the last character
+            if let Some(p) = visited.pop() {
+                keep.push(p);
             }
         } else {
-            pos +=1;
+            keep.push(pos2);
+            visited.push(pos1);
         }
     }
 
-    keep.len()
+    visited.len() + 1
 }
 
 
@@ -63,9 +62,9 @@ fn main() -> std::io::Result<()> {
     let now = Instant::now();
     let part_one =  trim_units(&s, None);
     let time = now.elapsed();
-    println!("4a: reacted polymer has length {} ({:.3}s)",
+    println!("4a: Reacted polymer has length {:.4} ({}ms)",
         part_one,
-        time.as_secs() as f64 + time.subsec_millis() as f64  / 1000.0);
+        time.subsec_micros() as f64 / 1000.0);
 
     let now = Instant::now();
     // no iterator over char ranges?
@@ -79,10 +78,23 @@ fn main() -> std::io::Result<()> {
         })
         .min_by_key(|e| e.0).unwrap();
     let time = now.elapsed();
-    println!("4b: minimum reacted polymer has length {} after removing {} ({:.3}s)",
+    println!("4b: Minimum reacted polymer has length {} after removing {} ({:.4}ms)",
         part_two,
         min_char,
-        time.as_secs() as f64 + time.subsec_millis() as f64  / 1000.0);
+        time.subsec_micros() as f64 / 1000.0);
 
     Ok(())
+}
+
+#[test]
+fn part_one() {
+    assert_eq!(trim_units("dabAcCaCBAcCcaDA", None), 10);
+}
+
+#[test]
+fn part_two() {
+    assert_eq!(trim_units("dabAcCaCBAcCcaDA", Some('a')), 6);
+    assert_eq!(trim_units("dabAcCaCBAcCcaDA", Some('b')), 8);
+    assert_eq!(trim_units("dabAcCaCBAcCcaDA", Some('c')), 4);
+    assert_eq!(trim_units("dabAcCaCBAcCcaDA", Some('d')), 6);
 }
