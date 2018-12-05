@@ -12,7 +12,7 @@ fn trim_units(s: &str, ignore: Option<char>) -> usize {
     assert!(s.is_ascii());
 
     //convert s to bytes
-    let b: Vec<u8> = s.chars().map(|c| c as u8).collect();
+    let b: Vec<u8> = s.bytes().collect();
 
     //prepare the visit queue
     let mut keep: Vec<usize> = if let Some(rm) = ignore {
