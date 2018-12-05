@@ -68,7 +68,7 @@ fn main() -> std::io::Result<()> {
 
     let now = Instant::now();
     // no iterator over char ranges?
-    let (part_two, min_char) = (97..123)
+    let (part_two, min_char) = (b'a' ..= b'z')
         .map(|rm| {
             let c = char::from(rm);
             (
