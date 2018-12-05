@@ -46,8 +46,6 @@ fn trim_units(b: &[u8], ignore: Option<u8>, return_result: bool) -> (usize, Opti
     };
 
     (len, result)
-
-
 }
 
 fn main() -> std::io::Result<()> {
@@ -90,13 +88,13 @@ fn main() -> std::io::Result<()> {
 
 #[test]
 fn part_one() {
-    assert_eq!(trim_units("dabAcCaCBAcCcaDA", None), 10);
+    assert_eq!(trim_units(b"dabAcCaCBAcCcaDA", None, false).0, 10);
 }
 
 #[test]
 fn part_two() {
-    assert_eq!(trim_units("dabAcCaCBAcCcaDA", Some('a')), 6);
-    assert_eq!(trim_units("dabAcCaCBAcCcaDA", Some('b')), 8);
-    assert_eq!(trim_units("dabAcCaCBAcCcaDA", Some('c')), 4);
-    assert_eq!(trim_units("dabAcCaCBAcCcaDA", Some('d')), 6);
+    assert_eq!(trim_units(b"dabAcCaCBAcCcaDA", Some(b'a'), false).0, 6);
+    assert_eq!(trim_units(b"dabAcCaCBAcCcaDA", Some(b'b'), false).0, 8);
+    assert_eq!(trim_units(b"dabAcCaCBAcCcaDA", Some(b'c'), false).0, 4);
+    assert_eq!(trim_units(b"dabAcCaCBAcCcaDA", Some(b'd'), false).0, 6);
 }
