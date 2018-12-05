@@ -79,7 +79,7 @@ fn main() -> std::io::Result<()> {
         })
         .min_by_key(|e| e.0).unwrap();
     let time = now.elapsed();
-    println!("4a: minimum reacted polymer has length {} after removing {} ({:.3}s)",
+    println!("4b: minimum reacted polymer has length {} after removing {} ({:.3}s)",
         part_two,
         min_char,
         time.as_secs() as f64 + time.subsec_millis() as f64  / 1000.0);
