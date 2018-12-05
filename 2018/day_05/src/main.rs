@@ -3,7 +3,7 @@ use std::io::Read;
 
 use std::time::Instant;
 
-fn trim_units(b: &[u8], ignore: Option<u8>) -> usize {
+fn trim_units(b: &[u8], ignore: Option<u8>, return_result: bool) -> (usize, Option<Vec<u8>>) {
     //prepare the visit queue
     let mut keep: Vec<usize> = if let Some(rm) = ignore {
         b.iter().enumerate()
@@ -37,10 +37,18 @@ fn trim_units(b: &[u8], ignore: Option<u8>) -> usize {
             visited.push(pos1);
         }
     }
+    visited.push(keep.pop().unwrap());
+    let len = visited.len();
+    let result = if return_result {
+        Some(visited.iter().map(|&p| b[p]).collect())
+    } else {
+        None
+    };
 
-    visited.len() + 1
+    (len, result)
+
+
 }
-
 
 fn main() -> std::io::Result<()> {
     let mut f = File::open("input.txt")?;
@@ -53,18 +61,20 @@ fn main() -> std::io::Result<()> {
     let b: Vec<u8> = s.bytes().collect();
 
     let now = Instant::now();
-    let part_one =  trim_units(&b, None);
+    let (part_one_len, part_one_v) =  trim_units(&b, None, true);
     let time = now.elapsed();
     println!("4a: Reacted polymer has length {:.4} ({}ms)",
-        part_one,
+        part_one_len,
         time.subsec_micros() as f64 / 1000.0);
 
     let now = Instant::now();
+    // use the result from part one as input for part 2
+    let in2 = part_one_v.as_ref().unwrap();
     // no iterator over char ranges?
     let (part_two, min_char) = (b'a' ..= b'z')
         .map(|rm| {
             (
-                trim_units(&b, Some(rm)),
+                trim_units(in2, Some(rm), false).0,
                 char::from(rm)
             )
         })
