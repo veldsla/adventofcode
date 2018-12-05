@@ -1,25 +1,14 @@
-use std::collections::BinaryHeap;
 use std::fs::File;
 use std::io::Read;
 
 use std::time::Instant;
 
-fn trim_units(s: &str, ignore: Option<char>) -> usize {
-    //we assume ascii
-    if let Some(c) = ignore {
-        assert!(c.is_ascii());
-    }
-    assert!(s.is_ascii());
-
-    //convert s to bytes
-    let b: Vec<u8> = s.bytes().collect();
-
+fn trim_units(b: &[u8], ignore: Option<u8>) -> usize {
     //prepare the visit queue
     let mut keep: Vec<usize> = if let Some(rm) = ignore {
-        let rmb = rm as u8;
         b.iter().enumerate()
             .filter_map(|(pos, &c)| {
-                let res = c ^ rmb;
+                let res = c ^ rm;
                 if res == 0 || res == 32 {
                     None
                 } else {
@@ -59,8 +48,12 @@ fn main() -> std::io::Result<()> {
     f.read_to_string(&mut s)?;
     let s = s.trim_end();
 
+    //convert string to byte vec if validated ascii only
+    assert!(s.is_ascii());
+    let b: Vec<u8> = s.bytes().collect();
+
     let now = Instant::now();
-    let part_one =  trim_units(&s, None);
+    let part_one =  trim_units(&b, None);
     let time = now.elapsed();
     println!("4a: Reacted polymer has length {:.4} ({}ms)",
         part_one,
@@ -70,10 +63,9 @@ fn main() -> std::io::Result<()> {
     // no iterator over char ranges?
     let (part_two, min_char) = (b'a' ..= b'z')
         .map(|rm| {
-            let c = char::from(rm);
             (
-                trim_units(&s, Some(c)),
-                c
+                trim_units(&b, Some(rm)),
+                char::from(rm)
             )
         })
         .min_by_key(|e| e.0).unwrap();
