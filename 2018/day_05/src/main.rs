@@ -41,8 +41,7 @@ fn trim_units(s: &str, ignore: Option<char>) -> usize {
         if b[pos1] ^ b[pos2] == 32 {
             //this an opposite polarity pair
             //remove from keep
-            keep.remove(pos);
-            keep.remove(pos);
+            keep.drain(pos..pos+2);
             if pos > 0 {
                 pos -= 1;
             }
