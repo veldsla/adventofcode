@@ -26,7 +26,6 @@ impl FromStr for Cell {
     }
 }
 
-
 impl Cell {
     fn dist(&self, other: &Cell) -> i32 {
         (self.x - other.x).abs() + (self.y - other.y).abs()
@@ -98,11 +97,11 @@ impl Field {
                 }
             }).collect();
 
-        //sd is now a map of valid region(s) (that are possibly non connecting? Apparently not :-))
+        //sd is now a map of the valid region
+        //I think it makes sense that this one is always connected
         sd.iter().sum()
 
     }
-
 
     fn closest_target(&self, cell: Cell) -> Option<usize> {
         let mut min = i32::MAX;
