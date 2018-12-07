@@ -1,0 +1,7 @@
+[package]
+name = "day_06"
+version = "0.1.0"
+authors = ["Arno Velds <avelds@gmail.com>"]
+
+[dependencies]
+itertools = "0.7.11"
