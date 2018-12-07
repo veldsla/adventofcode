@@ -5,7 +5,7 @@ use warnings;
 
 use List::Util qw/sum0 max/;
 use List::MoreUtils qw/last_index/;
-use Storable qw(dclone);
+use Storable qw/dclone/;
 
 my $WORKERS = 5;
 my $BASECOST = 60;
@@ -66,7 +66,7 @@ sub worker_time {
 		my $w = first_avail_worker(\@workers);
 		# get the time the prereqs are finished
 		my $f = time_finished(\@workers, $incoming{$node});
-		# pad with waiting time and time required for node
+		# pad with waiting time and add time required for node
 		my $pad = $f - scalar(@$w);
 		push @$w, ('.')x$pad if $pad > 0;
 		push @$w, ($node) x ($BASECOST + ord($node) - 64) ;
