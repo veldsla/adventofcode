@@ -86,23 +86,21 @@ fn part_two(nplayers: usize, points_last: u32) -> u32 {
 
                 players[player] += take;
             }
-
-
-            //if marbles.is_empty() {
         } else {
             return *players.iter().max().unwrap();
         }
         iteration += 1;
-        }
+    }
 }
 
 fn main() {
     // 426 players; last marble is worth 72058 points
     // use naive algorithm
-    println!("9a: Winner has {} points", part_two(426, 72058));
+    println!("9a: Winner has {} points", part_one(426, 72058));
 
     // more marbles
-    // 426 players; last marble is worth 72058 points
+    // 426 players; last marble is worth 7205800 points
+    // use optimized juggler
     println!("9b: Winner has {} points", part_two(426, 7205800));
 }
 
