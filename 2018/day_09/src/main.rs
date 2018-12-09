@@ -9,29 +9,26 @@ fn part_one(nplayers: usize, points_last: u32) -> u32 {
     let mut players: Vec<_> = (0..nplayers).map(|_| 0).collect();
     let mut iteration = 0;
     let mut current = 0;
-    loop {
+    while let Some(marble) = marbles.next() {
         let player = iteration % nplayers;
-        if let Some(marble) = marbles.next() {
-            if marble > 0 && marble % 23 != 0 {
-                let position = (current + 2) % board.len();
-                board.insert(position+1, marble);
-                current = position;
-            } else {
-                players[player] += marble;
-                let take = if current >= 7 {
-                    current - 7
-                } else {
-                    (board.len() as isize + (current as isize - 7) % board.len() as isize) as usize
-                };
-                let m =  board.remove((take + 1) % board.len());
-                players[player] += m;
-                current = take  % board.len();
-            }
+        if marble > 0 && marble % 23 != 0 {
+            let position = (current + 2) % board.len();
+            board.insert(position+1, marble);
+            current = position;
         } else {
-            return *players.iter().max().unwrap();
+            players[player] += marble;
+            let take = if current >= 7 {
+                current - 7
+            } else {
+                (board.len() as isize + (current as isize - 7) % board.len() as isize) as usize
+            };
+            let m =  board.remove((take + 1) % board.len());
+            players[player] += m;
+            current = take  % board.len();
         }
         iteration += 1;
     }
+    *players.iter().max().unwrap()
 }
 
 /// optimized to two queue's that split the data between the current
@@ -45,52 +42,48 @@ fn part_two(nplayers: usize, points_last: u32) -> u32 {
 
     let mut players: Vec<_> = (0..nplayers).map(|_| 0).collect();
     let mut iteration = 0;
-    loop {
+    while let Some(marble) = marbles.next() {
         let player = iteration % nplayers;
-        if let Some(marble) = marbles.next() {
-            if marble > 0 && marble % 23 != 0 {
-                //can we shift a marble right to left?
-                if let Some(e) = board_right.pop_front() {
-                    board_left.push_back(e);
-                    board_left.push_back(marble);
-                } else {
-                    //board right is empty
-                    std::mem::swap(&mut board_left, &mut board_right);
-                    board_left.push_back(board_right.pop_front().unwrap());
-                    board_left.push_back(marble);
-                }
+        if marble > 0 && marble % 23 != 0 {
+            //can we shift a marble right to left?
+            if let Some(e) = board_right.pop_front() {
+                board_left.push_back(e);
+                board_left.push_back(marble);
             } else {
-                players[player] += marble;
-                // try to move 7 elements from left to right
-                let mut moved = 0;
-                for _ in 0 .. 7 {
-                    if let Some(e) = board_left.pop_back() {
-                        board_right.push_front(e);
-                        moved += 1;
-                    }
-                }
-                if board_left.is_empty() {
-                    std::mem::swap(&mut board_left, &mut board_right);
-                    //place the remaing items from left to right
-                    let pos = board_left.len() - 7 + moved;
-                    board_right.extend(board_left.drain(pos..))
-                }
-
-                let take = board_left.pop_back().unwrap();
-                //move cursor 1 to the right
-                if let Some(n) = board_right.pop_front() {
-                    board_left.push_back(n);
-                } else {
-                    std::mem::swap(&mut board_left, &mut board_right);
-                }
-
-                players[player] += take;
+                //board right is empty
+                std::mem::swap(&mut board_left, &mut board_right);
+                board_left.push_back(board_right.pop_front().unwrap());
+                board_left.push_back(marble);
             }
         } else {
-            return *players.iter().max().unwrap();
+            players[player] += marble;
+            // try to move 7 elements from left to right
+            let moved = std::cmp::min(board_left.len(), 7);
+            for _ in 0 .. moved {
+                if let Some(e) = board_left.pop_back() {
+                    board_right.push_front(e);
+                }
+            }
+            if board_left.is_empty() {
+                std::mem::swap(&mut board_left, &mut board_right);
+                //place the remaing items from left to right
+                let pos = board_left.len() - 7 + moved;
+                board_right.extend(board_left.drain(pos..))
+            }
+
+            let take = board_left.pop_back().unwrap();
+            //move cursor 1 to the right
+            if let Some(n) = board_right.pop_front() {
+                board_left.push_back(n);
+            } else {
+                std::mem::swap(&mut board_left, &mut board_right);
+            }
+
+            players[player] += take;
         }
         iteration += 1;
     }
+    *players.iter().max().unwrap()
 }
 
 fn main() {
