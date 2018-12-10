@@ -43,7 +43,6 @@ impl PointField {
         let b = BufReader::new(f);
         let points = b.lines()
             .map(|l| l.and_then(|l| l.parse().map_err(|e| io::Error::new(io::ErrorKind::InvalidData,format!("{}",e)))))
-            //.inspect(|i| println!("{:?}", i))
             .collect::<Result<Vec<_>, _>>()?;
         Ok(PointField { points })
     }
