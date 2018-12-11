@@ -5,6 +5,7 @@ use itertools::Itertools;
 #[derive(Debug)]
 struct FuelCells {
     cells: Vec<i32>,
+    summed_area: Vec<i32>,
     dim: usize
 }
 
@@ -21,12 +22,28 @@ fn make_power(serial: i32) -> impl Fn(usize, usize) -> i32 {
 impl FuelCells {
     fn new(dim: usize, serial: i32) -> FuelCells {
         let power = make_power(serial);
-        let cells = (1..=dim)
+        let cells: Vec<i32> = (1..=dim)
             .cartesian_product(1..=dim)
             .map(|(y, x)| power(x, y))
             .collect();
 
-        FuelCells { cells, dim }
+        //create a summed area matrix for fast square summing
+        //sum the rows
+        let mut summed_area: Vec<i32> = cells.chunks(dim)
+            .flat_map(|v| v.iter().scan(0, |sum, i| {*sum += i; Some(*sum)}))
+            .collect();
+
+        //sum the cols
+        for x in 0..dim {
+            let mut sum = 0;
+            for row in 0..dim {
+                let i = x + row*dim;
+                sum += summed_area[i];
+                summed_area[i] = sum;
+            }
+        }
+
+        FuelCells { cells, summed_area, dim }
     }
 
     fn highest_square(&self, size: usize) -> (i32, usize, usize) {
@@ -34,24 +51,28 @@ impl FuelCells {
         if size == self.dim {
             return (self.cells.iter().sum::<i32>(), 1, 1);
         }
+        let skip = size -1;
         let end = self.dim - size;
-        let colsums: Vec<i32> = (0..end)
-            .cartesian_product(0..self.dim)
+        (0..end)
+            .cartesian_product(0..end)
             .map(|(y, x)| {
-                //zero based x/y
-                (y..y+size).map(|row| self.cells[x + row*self.dim]).sum()
-            }).collect();
-
-        colsums.windows(size)
-            .enumerate()
-            .map(|(pos, v)| {
-                let sum = v.iter().sum();
-                let x = pos % self.dim;
-                let y = pos / self.dim;
+                // sum up to bottom right coord
+                let mut sum = self.summed_area[(y+skip)*self.dim + x + skip];
+                if x > 0 {
+                    //subtract left part not in square
+                    sum -= self.summed_area[(y+skip)*self.dim + x - 1 ];
+                }
+                if y > 0 {
+                    //subtract top part not in square
+                    sum -= self.summed_area[(y-1)*self.dim + x + skip];
+                }
+                if x > 0 && y > 0 {
+                    //add back double subtracted topleft square
+                    sum += self.summed_area[(y-1)*self.dim + x -1];
+                }
                 (sum, x+1, y+1)
             })
-            .max_by_key(|e| e.0)
-            .unwrap()
+            .max_by_key(|e| e.0).unwrap()
     }
 
     fn maximum_power_square(&self) -> (i32, usize, usize, usize) {
@@ -92,6 +113,7 @@ mod test {
     #[test]
     fn three_by_three() {
         let f = FuelCells::new(300, 18);
+        println!("{:?}", f);
         assert_eq!(f.highest_square(3), (29, 33, 45));
 
         let f = FuelCells::new(300, 42);
