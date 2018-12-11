@@ -51,25 +51,26 @@ impl FuelCells {
         if size == self.dim {
             return (self.cells.iter().sum::<i32>(), 1, 1);
         }
+        let skip = size -1;
         let end = self.dim - size;
         (0..end)
             .cartesian_product(0..end)
             .map(|(y, x)| {
                 // sum up to bottom right coord
-                let mut sum = self.summed_area[(y+size)*self.dim + x + size];
+                let mut sum = self.summed_area[(y+skip)*self.dim + x + skip];
                 if x > 0 {
                     //subtract left part not in square
-                    sum -= self.summed_area[(y+size)*self.dim + x ];
+                    sum -= self.summed_area[(y+skip)*self.dim + x - 1 ];
                 }
                 if y > 0 {
                     //subtract top part not in square
-                    sum -= self.summed_area[y*self.dim + x + size];
+                    sum -= self.summed_area[(y-1)*self.dim + x + skip];
                 }
                 if x > 0 && y > 0 {
-                    //add back double subtracted square
-                    sum += self.summed_area[y*self.dim + x];
+                    //add back double subtracted topleft square
+                    sum += self.summed_area[(y-1)*self.dim + x -1];
                 }
-                (sum, x+2, y+2)
+                (sum, x+1, y+1)
             })
             .max_by_key(|e| e.0).unwrap()
     }
@@ -111,9 +112,6 @@ mod test {
 
     #[test]
     fn three_by_three() {
-        //let f = FuelCells::new(10, 18);
-        //println!("{:?}", f);
-        //assert!(false);
         let f = FuelCells::new(300, 18);
         println!("{:?}", f);
         assert_eq!(f.highest_square(3), (29, 33, 45));
