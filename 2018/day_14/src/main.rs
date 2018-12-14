@@ -16,7 +16,7 @@ fn recipe_scores(n: usize) -> String {
         elf_1 = (elf_1 + (1 + recipe_1) as usize) % v.len();
         elf_2 = (elf_2 + (1 + recipe_2) as usize) % v.len();
     }
-    v[n..].iter().take(10).map(|i| format!("{}", i)).collect()
+    v[n..].iter().take(10).map(|&i| char::from(i)).collect()
 }
 
 fn recipes_before<S: AsRef<str>>(n: S) -> usize {
