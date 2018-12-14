@@ -27,13 +27,13 @@ fn recipes_before<S: AsRef<str>>(n: S) -> usize {
     let mut elf_1 = 0;
     let mut elf_2 = 1;
 
-    while v.len() < l || &v[v.len()-l..] != &pattern[..] {
+    while !v.ends_with(&pattern) {
         let recipe_1 = v[elf_1];
         let recipe_2 = v[elf_2];
         let sum = recipe_1 + recipe_2;
         if sum >= 10 {
             v.push(1);
-            if v.len() >= l && &v[v.len()-l..] == &pattern[..] {
+            if v.ends_with(&pattern) {
                 break
             }
             v.push(sum - 10);
