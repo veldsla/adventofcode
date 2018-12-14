@@ -22,6 +22,9 @@ fn recipe_scores(n: usize) -> String {
 fn recipes_before<S: AsRef<str>>(n: S) -> usize {
     let pattern: Vec<u8> = n.as_ref().chars().map(|c| c.to_digit(10).unwrap() as u8).collect();
     let l = pattern.len();
+    if pattern.len() < 8 {
+        return match_pattern_by_number(pattern);
+    }
 
     let mut v = vec![3u8,7];
     let mut elf_1 = 0;
@@ -39,6 +42,42 @@ fn recipes_before<S: AsRef<str>>(n: S) -> usize {
             v.push(sum - 10);
         } else {
             v.push(sum);
+        }
+        elf_1 = (elf_1 + (1 + recipe_1) as usize) % v.len();
+        elf_2 = (elf_2 + (1 + recipe_2) as usize) % v.len();
+    }
+    v.len() - l 
+}
+
+fn match_pattern_by_number(n: Vec<u8>) -> usize {
+    let mut target = 0;
+    let mut mask = 0;
+    let l = n.len();
+    for (i, v) in n.iter().rev().enumerate() {
+        target |= ( (*v as u64) << i*8);
+        mask |= 255 << i*8;
+    }
+
+    let mut v = vec![3u8,7];
+    let mut end = (3u64 << 8) | 7;
+    let mut elf_1 = 0;
+    let mut elf_2 = 1;
+
+    while target != end {
+        let recipe_1 = v[elf_1];
+        let recipe_2 = v[elf_2];
+        let sum = recipe_1 + recipe_2;
+        if sum >= 10 {
+            v.push(1);
+            end = ((end << 8) & mask) | 1;
+            if end == target {
+                break
+            }
+            end = ((end << 8) & mask) | (sum as u64 - 10);
+            v.push(sum - 10);
+        } else {
+            v.push(sum);
+            end = ((end << 8) & mask) | sum as u64;
         }
         elf_1 = (elf_1 + (1 + recipe_1) as usize) % v.len();
         elf_2 = (elf_2 + (1 + recipe_2) as usize) % v.len();
