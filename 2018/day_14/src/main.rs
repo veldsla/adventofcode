@@ -22,7 +22,7 @@ fn recipe_scores(n: usize) -> String {
 fn recipes_before<S: AsRef<str>>(n: S) -> usize {
     let pattern: Vec<u8> = n.as_ref().chars().map(|c| c.to_digit(10).unwrap() as u8).collect();
     let l = pattern.len();
-    if pattern.len() < 8 {
+    if pattern.len() <= 8 {
         return match_pattern_by_number(pattern);
     }
 
