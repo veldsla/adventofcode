@@ -64,8 +64,8 @@ fn match_pattern_by_number(n: Vec<u8>) -> usize {
     let mut elf_2 = 1;
 
     while target != end {
-        let recipe_1 = v[elf_1];
-        let recipe_2 = v[elf_2];
+        let recipe_1 = unsafe { *v.get_unchecked(elf_1) };
+        let recipe_2 = unsafe { *v.get_unchecked(elf_2) };
         let sum = recipe_1 + recipe_2;
         if sum >= 10 {
             v.push(1);
@@ -79,8 +79,10 @@ fn match_pattern_by_number(n: Vec<u8>) -> usize {
             v.push(sum);
             end = ((end << 8) & mask) | sum as u64;
         }
-        elf_1 = (elf_1 + (1 + recipe_1) as usize) % v.len();
-        elf_2 = (elf_2 + (1 + recipe_2) as usize) % v.len();
+        elf_1 = elf_1 + (1 + recipe_1) as usize;
+        while elf_1 >= v.len() { elf_1 -= v.len() };
+        elf_2 = elf_2 + (1 + recipe_2) as usize;
+        while elf_2 >= v.len() { elf_2 -= v.len() };
     }
     v.len() - l 
 }
