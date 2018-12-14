@@ -59,7 +59,7 @@ fn match_pattern_by_number(n: Vec<u8>) -> usize {
     }
 
     let mut v = vec![3u8,7];
-    let mut end = (3u64 << 8) | 7;
+    let mut end = (3u64 << 4) | 7;
     let mut elf_1 = 0;
     let mut elf_2 = 1;
 
