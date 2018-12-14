@@ -19,8 +19,8 @@ fn recipe_scores(n: usize) -> String {
     v[n..].iter().take(10).map(|i| format!("{}", i)).collect()
 }
 
-fn recipes_before(n: String) -> usize {
-    let pattern: Vec<usize> = n.chars().map(|c| c.to_digit(10).unwrap() as usize).collect();
+fn recipes_before<S: AsRef<str>>(n: S) -> usize {
+    let pattern: Vec<usize> = n.as_ref().chars().map(|c| c.to_digit(10).unwrap() as usize).collect();
     let l = pattern.len();
 
     let mut v = vec![3usize,7];
@@ -62,8 +62,8 @@ fn test() {
 
 #[test]
 fn test2() {
-    assert_eq!(recipes_before("51589".to_owned()), 9);
-    assert_eq!(recipes_before("01245".to_owned()), 5);
-    assert_eq!(recipes_before("92510".to_owned()), 18);
-    assert_eq!(recipes_before("59414".to_owned()), 2018);
+    assert_eq!(recipes_before("51589"), 9);
+    assert_eq!(recipes_before("01245"), 5);
+    assert_eq!(recipes_before("92510"), 18);
+    assert_eq!(recipes_before("59414"), 2018);
 }
