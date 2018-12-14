@@ -1,5 +1,5 @@
 fn recipe_scores(n: usize) -> String {
-    let mut v = vec![3,7];
+    let mut v = vec![3u8,7];
     let mut elf_1 = 0;
     let mut elf_2 = 1;
 
@@ -13,17 +13,17 @@ fn recipe_scores(n: usize) -> String {
         } else {
             v.push(sum);
         }
-        elf_1 = (elf_1 + 1 + recipe_1) % v.len();
-        elf_2 = (elf_2 + 1 + recipe_2) % v.len();
+        elf_1 = (elf_1 + (1 + recipe_1) as usize) % v.len();
+        elf_2 = (elf_2 + (1 + recipe_2) as usize) % v.len();
     }
     v[n..].iter().take(10).map(|i| format!("{}", i)).collect()
 }
 
 fn recipes_before<S: AsRef<str>>(n: S) -> usize {
-    let pattern: Vec<usize> = n.as_ref().chars().map(|c| c.to_digit(10).unwrap() as usize).collect();
+    let pattern: Vec<u8> = n.as_ref().chars().map(|c| c.to_digit(10).unwrap() as u8).collect();
     let l = pattern.len();
 
-    let mut v = vec![3usize,7];
+    let mut v = vec![3u8,7];
     let mut elf_1 = 0;
     let mut elf_2 = 1;
 
@@ -40,8 +40,8 @@ fn recipes_before<S: AsRef<str>>(n: S) -> usize {
         } else {
             v.push(sum);
         }
-        elf_1 = (elf_1 + 1 + recipe_1) % v.len();
-        elf_2 = (elf_2 + 1 + recipe_2) % v.len();
+        elf_1 = (elf_1 + (1 + recipe_1) as usize) % v.len();
+        elf_2 = (elf_2 + (1 + recipe_2) as usize) % v.len();
     }
     v.len() - l 
 }
