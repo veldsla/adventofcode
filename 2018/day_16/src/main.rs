@@ -126,6 +126,7 @@ fn main() -> io::Result<()> {
     }).filter(|&n| n >= 3).count();
     println!("16a: {} units work for three or more opcodes", uocount);
 
+    // part two, map all to an opcode
     // split by opcode number
     let mut unitmap = HashMap::new();
     for u in units {
@@ -133,7 +134,7 @@ fn main() -> io::Result<()> {
         e.push(u);
     }
 
-    // part two, map all to an opcode
+    // reverse engineer the opcode numbers
     let mut c = Computer::new();
     let mut opcode_map = HashMap::new();
     let mut opcodes_found = HashSet::new();
@@ -143,9 +144,7 @@ fn main() -> io::Result<()> {
         for (on, list) in unitmap.iter().filter(|(k,_)| !opcode_map.contains_key(k)) {
             let mut opcodes: Vec<_> = c.available_opcodes().into_iter().filter(|c| !opcodes_found.contains(c)).collect();
             for unit in list {
-                opcodes.retain(|opc| {
-                    c.test_unit(opc, unit)
-                });
+                opcodes.retain(|opc|c.test_unit(opc, unit));
                 if opcodes.len() == 1 {
                     opcode_map.insert(on, opcodes[0].to_owned());
                     opcodes_found.insert(opcodes[0].to_owned());
@@ -155,6 +154,7 @@ fn main() -> io::Result<()> {
         }
     }
 
+    // run the binary
     let mut c = Computer::new();
     let binary: Vec<i64> = parts[1].split_whitespace().map(|s| s.parse().unwrap()).collect();
     for bin in binary.chunks(4) {
