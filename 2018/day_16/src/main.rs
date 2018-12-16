@@ -69,13 +69,11 @@ struct Unit {
     a: i64,
     b: i64,
     c: usize,
-    matches: Option<String>
 }
 
 impl FromStr for Unit {
     type Err = &'static str;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        //println!("{}", s);
         let mut lines = s.split('\n');
         let be = lines.next().unwrap();
         let mut bi = be.split(|c| c == '[' || c== ',' || c== ' ' || c == ']').skip(1).filter(|s| !s.is_empty()).take(4);
@@ -99,7 +97,7 @@ impl FromStr for Unit {
         after[2] = ai.next().unwrap().parse().unwrap();
         after[3] = ai.next().unwrap().parse().unwrap();
 
-        Ok( Unit {before, after, cmd, a, b, c, matches: None })
+        Ok( Unit {before, after, cmd, a, b, c })
     }
 }
 
