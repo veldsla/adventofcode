@@ -41,7 +41,7 @@ impl<'a> Computer<'a> {
         self.registers = registers;
     }
 
-    fn cmd(&mut self, s: &'a str, a: i64, b: i64, c: usize) {
+    fn cmd(&mut self, s: &str, a: i64, b: i64, c: usize) {
         let f = self.opcodes.get(s).expect("Command not available");
         f(&mut self.registers, a, b, c);
     }
