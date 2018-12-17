@@ -1,0 +1,9 @@
+[package]
+name = "day_17"
+version = "0.1.0"
+authors = ["Arno Velds <a.velds@nki.nl>"]
+edition = "2018"
+
+[dependencies]
+ndarray = "0.12.1"
+png = "0.13.2"
