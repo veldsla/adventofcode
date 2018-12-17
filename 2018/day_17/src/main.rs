@@ -148,11 +148,19 @@ impl Ground {
 
     fn count_water(&self) -> usize {
         let (width, height) = self.data.dim();
-        self.data.t().iter().skip(self.min_y * width).take(width * (height - self.min_y - 1)).filter(|&&c| c == '~' || c == '|').count()
+        self.data.t()
+            .iter()
+            .skip(self.min_y * width)
+            .take(width * (height - self.min_y - 1))
+            .filter(|&&c| c == '~' || c == '|')
+            .count()
     }
 
     fn count_trapped_water(&self) -> usize {
-        self.data.t().iter().filter(|&&c| c == '~').count()
+        self.data.t()
+            .iter()
+            .filter(|&&c| c == '~')
+            .count()
     }
 
     fn to_png<P: AsRef<Path>>(&self, p: P) -> Result<(), png::EncodingError> {
