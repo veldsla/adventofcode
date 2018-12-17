@@ -84,8 +84,7 @@ impl Ground {
     }
 
     /// flow the water from the spring (500,0)
-    /// method go down
-    /// foreach source
+    /// method
     /// flow down, push each position to source queue
     ///  - if clay
     ///     pop last source and flow rowbased
