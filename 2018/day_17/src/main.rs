@@ -64,16 +64,16 @@ impl Ground {
         });
 
         //create the matrix add 2 to x left and right and 1 to bottom
-        let mut data = Array::from_elem((maxx - minx + 3, maxy + 2), '.');
-        let offset_x = minx - 1;
+        let mut data = Array::from_elem((maxx - minx + 5, maxy + 2), '.');
+        let offset_x = minx;
         //fill in the veins
         for v in veins {
             match v {
                 Vein::Vertical(x, y0, y1) => {
-                    data.slice_mut(s![x-minx+1..x-minx+2, y0..y1+1]).iter_mut().for_each(|e| *e = '#');
+                    data.slice_mut(s![x-minx+2..x-minx+3, y0..y1+1]).iter_mut().for_each(|e| *e = '#');
                 },
                 Vein::Horizontal(y, x0, x1) => {
-                    data.slice_mut(s![x0-minx+1..x1-minx+2, y..y+1]).iter_mut().for_each(|e| *e = '#');
+                    data.slice_mut(s![x0-minx+2..x1-minx+3, y..y+1]).iter_mut().for_each(|e| *e = '#');
                 }
             }
         }
@@ -113,13 +113,9 @@ impl Ground {
 
     fn fill_row(&mut self, x: usize, y:usize, sources: &mut Vec<(usize, usize)>) {
         //if the row is contained within # we fill with ~ if not use |
-        let maxx = self.data.dim().0;
         let mut left = x-1;
         loop {
-            if left == 0 {
-                sources.push((0,y));
-                break;
-            } else if self.data[[left, y+1]] == '.' {
+            if self.data[[left, y+1]] == '.' {
                 sources.push((left,y));
                 break;
             } else if self.data[[left,y]] == '#' {
@@ -133,10 +129,7 @@ impl Ground {
 
         let mut right = x+1;
         loop {
-            if right == maxx-1 {
-                sources.push((right,y));
-                break;
-            } else if self.data[[right, y+1]] == '.' {
+            if self.data[[right, y+1]] == '.' {
                 sources.push((right,y));
                 right += 1;
                 break;
@@ -185,7 +178,7 @@ impl Ground {
 }
 
 fn main() {
-    let mut ground = Ground::from_file("input.txt").unwrap();
+    let mut ground = Ground::from_file("another.txt").unwrap();
     ground.to_png("start.png").unwrap();
     ground.flow_spring();
     ground.to_png("end.png").unwrap();
