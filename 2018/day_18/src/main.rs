@@ -84,7 +84,7 @@ fn main() {
             let d = t - previous;
             //repeat every d minutes
             let remaining = (target - t) % d;
-            for i in 1..remaining {
+            for _ in 1..remaining {
                 field.evolve()
             }
             let (lumber, trees) = field.count();
