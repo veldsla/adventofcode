@@ -32,7 +32,6 @@ impl Field {
                 .collect::<Vec<usize>>()
         }).collect::<Vec<_>>();
 
-
         Ok(Field { data, neighbours })
     }
 
@@ -45,8 +44,6 @@ impl Field {
                     _ => acc
                 }
             });
-
-            //println!(" pos = {} klumber = {}, trees = {}",tile, lumber, trees);
             match self.data[tile] {
                 '.' => if trees >= 3 { '|' } else { '.' },
                 '|' => if lumber >= 3 { '#' } else { '|' },
