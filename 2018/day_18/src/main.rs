@@ -36,7 +36,7 @@ impl Field {
     }
 
     fn evolve(&mut self) {
-        let new_field: Vec<char> = self.neighbours.iter().enumerate().map(|(tile, neigh)| {
+        let new_field: Vec<char> = self.neighbours.iter().zip(self.data.iter()).map(|(neigh, tile)| {
             let (lumber, trees) = neigh.iter().fold((0,0), |acc, pos| {
                 match self.data[*pos] {
                     '#' => (acc.0 + 1, acc.1),
@@ -44,7 +44,7 @@ impl Field {
                     _ => acc
                 }
             });
-            match self.data[tile] {
+            match tile {
                 '.' => if trees >= 3 { '|' } else { '.' },
                 '|' => if lumber >= 3 { '#' } else { '|' },
                 '#' => if lumber >= 1 && trees >= 1 { '#' } else { '.' },
