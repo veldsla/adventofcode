@@ -80,11 +80,11 @@ impl<'a> Computer<'a> {
                 let cmd = parts.next().ok_or(ioerror("Error parsing instruction"))?;
                 if let Some(&opcode) = self.mnemonics.get(cmd) {
                     let a = parts.next().ok_or(ioerror("Error parsing instruction"))
-                        .and_then(|s| s.parse().map_err(|e| ioerror(e)))?;
+                        .and_then(|s| s.parse().map_err(ioerror))?;
                     let b = parts.next().ok_or(ioerror("Error parsing instruction"))
-                        .and_then(|s| s.parse().map_err(|e| ioerror(e)))?;
+                        .and_then(|s| s.parse().map_err(ioerror))?;
                     let c = parts.next().ok_or(ioerror("Error parsing instruction"))
-                        .and_then(|s| s.parse().map_err(|e| ioerror(e)))?;
+                        .and_then(|s| s.parse().map_err(ioerror))?;
                     Ok(Instruction { opcode, a, b, c })
                 } else {
                     Err(ioerror("Uknown instruction"))
@@ -141,7 +141,7 @@ fn main() -> Result<(), String> {
     let elapsed = now.elapsed();
     println!("Ran {} iterations in {}µs, ({:.2}ns/iteration)",
              n_it, elapsed.subsec_micros(), elapsed.subsec_nanos() as f64 / n_it as f64);
-    println!("19a:  Value in register[0] after runnning input.txt is {}", c.get_register(0));
+    println!("19a: Value in register[0] after runnning input.txt is {}", c.get_register(0));
     println!("19b: sum(divisors(10551264)) = 27941760");
 
     Ok(())
