@@ -5,7 +5,9 @@ use std::io::{self, Read};
 struct Map(HashMap<(i32, i32), usize>);
 impl Map {
     fn new() -> Map {
-        Map(HashMap::new())
+        let mut map = HashMap::new();
+        map.insert((0, 0), 0);
+        Map(map)
     }
 
     fn update_dist(&mut self, x: i32, y: i32, dist: usize) -> usize {
@@ -37,9 +39,7 @@ impl Map {
 
 fn make_map(s: &str) -> Map {
     let mut map = Map::new();
-    map.update_dist(0, 0, 0);
     make_routes(s, 0, 0, &mut map);
-
     map
 }
 
