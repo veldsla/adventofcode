@@ -73,7 +73,6 @@ fn make_routes(s: &str, mut x: i32, mut y: i32, map: &mut Map) {
                         break;
                     }
                 }
-                //dist
             }
             _ => panic!("main: {}", c)
         }
