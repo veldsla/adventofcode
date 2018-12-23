@@ -82,7 +82,6 @@ impl Bots {
                         if count > target_count {
                             // square with higher count
                             target_count = count;
-                            best_val = x.abs() + y.abs() + z.abs();
                             best = (x, y, z);
                         } else if count == target_count {
                             // tie breaks, pick closest to origin
@@ -96,7 +95,6 @@ impl Bots {
             }
 
             if range == 1 {
-                println!("Part 2: {}", best_val);
                 return best;
             }
 
@@ -129,10 +127,10 @@ impl Bot {
 fn main() -> io::Result<()> {
     let bots = Bots::from_file("input.txt")?;
     let strongest = bots.strongest().ok_or_else(|| ioerror("No bots in input file"))?;
-    println!("{}", bots.0.len());
     println!("23a: The strongest bot at {},{} with radius {} has {} bots in range",
              strongest.x, strongest.y, strongest.r, bots.in_radius(strongest));
-    bots.best_exposure();
+    let (x, y, z) = bots.best_exposure();
+    println!("23b: Best exposure at ({},{},{}), distance from origin: {}", x, y, x, x.abs()+y.abs()+z.abs());
     Ok(())
 }
 
