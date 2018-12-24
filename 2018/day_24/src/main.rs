@@ -158,16 +158,15 @@ impl Body {
 
     fn prep_fights(&mut self) -> Vec<(u32, usize, usize)> {
         // target selection
-        let mut groups: Vec<_> = self.0.iter().enumerate().collect();
+        let mut groups: Vec<_> = self.0.iter().enumerate().filter(|g| g.1.alive()).collect();
         groups.sort_by_key(|e| e.1);
 
         let mut targeted = HashSet::new();
         let mut fights: Vec<_> = groups.iter().rev()
-            .filter(|(_, at)| at.alive())
             .filter_map(|(ai, at)| {
                 //find defender
                 let defender = groups.iter()
-                    .filter(|g| g.1.alive() && g.1.is_enemy(at) && !targeted.contains(&g.0))
+                    .filter(|g| g.1.is_enemy(at) && !targeted.contains(&g.0))
                     .map(|(i, d)| (d.damage(at), d.eff_power(), d.initiative, i))
                     .filter(|t| t.0 > 0)
                     .max();
