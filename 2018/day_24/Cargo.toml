@@ -1,0 +1,9 @@
+[package]
+name = "day_24"
+version = "0.1.0"
+authors = ["Arno Velds <a.velds@nki.nl>"]
+edition = "2018"
+
+[dependencies]
+regex = "1.1.0"
+lazy_static = "1.2.0"
