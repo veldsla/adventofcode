@@ -7,7 +7,7 @@ fn dist(p1: &(i32, i32, i32, i32), p2: &(i32, i32, i32, i32)) -> i32 {
 }
 
 fn constellations(mut v: Vec<(i32, i32, i32, i32)>) -> usize {
-    let mut cst = Vec::new();
+    let mut cst = 0;;
     while let Some(start) = v.pop() {
         let mut ncst = vec![start];
         loop {
@@ -22,9 +22,9 @@ fn constellations(mut v: Vec<(i32, i32, i32, i32)>) -> usize {
             });
             if oldv == v.len() { break; }
         }
-        cst.push(ncst);
+        cst += 1;
     }
-    cst.len()
+    cst
 }
 
 fn main() -> io::Result<()> {
