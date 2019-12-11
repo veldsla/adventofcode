@@ -46,7 +46,7 @@ for c in coords
 	end
 end
 image = permutedims(m)
-println("Day 8 part 2: Painted identifier below:")
+println("Day 11 part 2: Painted identifier below:")
 for i in size(image,1):-1:1
 	println(join(image[i,:]))
 end
