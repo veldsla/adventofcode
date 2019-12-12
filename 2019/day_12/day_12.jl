@@ -20,7 +20,7 @@ function energy(m, v)
 end
 
 function perioddim(md, vd)
-	c = Set{Vector{Int64}}()
+	start = vcat(md, vd)
 	n = size(md,1)
 	step = 0
 	while true
@@ -32,10 +32,8 @@ function perioddim(md, vd)
 		end
 		md .+= vd
 		key = vcat(md, vd)
-		if key in c
-			return step -1
-		else
-			push!(c, key)
+		if key == start
+			return step
 		end
 	end
 end
