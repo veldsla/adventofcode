@@ -38,13 +38,6 @@ function perioddim(md, vd)
 	end
 end
 
-function getperiod(v)
-	period = prod(v)
-	d = gcd(period .÷ v)
-	period ÷= d
-end
-
-
 tm = permutedims(reshape(vcat(parsemoon.(readlines("test.txt"))...), (3,4)))
 tv = zeros(Int64,size(tm))
 for i in 1:10
@@ -62,7 +55,7 @@ end
 tm = permutedims(reshape(vcat(parsemoon.(readlines("test2.txt"))...), (3,4)))
 tv = zeros(Int64,size(tm))
 tperiods = map(i->perioddim(tm[:,i], tv[:,i]), 1:3)
-@assert getperiod(tperiods) == 4686774924
+@assert lcm(tperiods) == 4686774924
 
 ### Day 12
 moons = permutedims(reshape(vcat(parsemoon.(readlines("input.txt"))...), (3,4)))
@@ -78,7 +71,7 @@ println("Day 12 part 1: Total energy in system after 1000 steps = $(e)")
 moons = permutedims(reshape(vcat(parsemoon.(readlines("input.txt"))...), (3,4)))
 velocities = zeros(Int64,size(moons))
 periods = map(i->perioddim(moons[:,i], velocities[:,i]), 1:3)
-period = getperiod(periods)
+period = lcm(periods)
 println("Day 12 part 2: Universe repeats after $(period) steps")
 
 
