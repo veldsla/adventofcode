@@ -208,6 +208,7 @@ B = "L,8,R,10,R,6\n"
 C = "R,12,L,10,R,10,L,8\n"
 feed = "n\n"
 
+c = Computer("input.txt")
 c.mem[1] = 2
 task = @async run!(c)
 for v in cd(main)
@@ -226,7 +227,8 @@ for v in cd(feed)
 	put_input!(c, v)
 end
 
-
+res = collect(c.output)
+println("Day 17 part two: Space dust collected: $(res[end])")
 
 
 
