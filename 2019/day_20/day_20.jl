@@ -30,8 +30,8 @@ function getportals(m)
 
 
 	#and the inner
-	tl = minimum(findall(x->'A'<=x<='Z',fullmaze[3:end-3,3:end-3])) + CartesianIndex(2,2)
-	br = maximum(findall(x->'A'<=x<='Z',fullmaze[3:end-3,3:end-3])) + CartesianIndex(2,2)
+	tl = minimum(findall(x->'A'<=x<='Z',m[3:end-3,3:end-3])) + CartesianIndex(2,2)
+	br = maximum(findall(x->'A'<=x<='Z',m[3:end-3,3:end-3])) + CartesianIndex(2,2)
 	subm = m[tl[1]:br[1], tl[2]:br[2]]
 	#draw(subm)
 	rows, cols = size(subm)
