@@ -1,6 +1,7 @@
 use std::path::Path;
 use std::fs::File;
 use std::io::Read;
+use std::time::Instant;
 
 use anyhow::{anyhow, Result};
 
@@ -30,11 +31,18 @@ pub fn run_day<I: AsRef<Path>>(day: u32, input: I) -> Result<()> {
     let mut b = Vec::new();
     f.read_to_end(&mut b)?;
 
+    let t = Instant::now();
     p.parse(&b)?;
+    println!("Day {} parsed ({:?})", day, t.elapsed());
+
+    let t = Instant::now();
     let res1 = p.part1()?;
-    println!("Day {} part 1: {}", day, res1);
+    println!("Day {} part 1: {} ({:?})", day, res1, t.elapsed());
+
+
+    let t = Instant::now();
     let res2 = p.part2()?;
-    println!("Day {} part 2: {}", day, res2);
+    println!("Day {} part 2: {} ({:?})", day, res2, t.elapsed());
 
     Ok(())
 }
