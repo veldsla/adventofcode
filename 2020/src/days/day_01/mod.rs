@@ -69,3 +69,24 @@ impl Problem for Solution {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const TST: &str = r#"1721
+979
+366
+299
+675
+1456"#;
+
+    #[test]
+    fn test() {
+        let mut sol = Solution::default();
+        assert!(sol.parse(TST.as_bytes()).is_ok());
+        assert_eq!(sol.input.as_ref().unwrap().0, vec![299, 366, 675, 979, 1456, 1721]);
+
+        assert_eq!(sol.part1().unwrap(), "514579");
+        assert_eq!(sol.part2().unwrap(), "241861950");
+    }
+}
