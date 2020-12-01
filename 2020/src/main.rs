@@ -33,7 +33,7 @@ fn main() -> Result<()> {
     }
 
     let torun = run_date.day();
-    let input = opt.input.unwrap_or_else(|| PathBuf::from(format!("inputs/{}.txt", &torun)));
+    let input = opt.input.unwrap_or_else(|| PathBuf::from(format!("inputs/day_{:02}.txt", torun)));
 
     println!("run day {} for {}", torun, input.display());
 
