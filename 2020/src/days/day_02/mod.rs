@@ -70,8 +70,7 @@ impl PwEntry {
     }
 
     fn is_valid_otcas(&self) -> bool {
-        self.password.chars()
-            .enumerate()
+        self.password.char_indices()
             .filter(|&(i, c)| {
                 c == self.policy.character &&
                 (i+1 == self.policy.times.start || i+2 == self.policy.times.end)
