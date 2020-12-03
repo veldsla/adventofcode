@@ -3,7 +3,7 @@ use anyhow::{anyhow, Result};
 //remove default impl and copy template from day_00
 mod day_01;
 mod day_02;
-mod day_03 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
+mod day_03;
 mod day_04 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
 mod day_05 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
 mod day_06 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
