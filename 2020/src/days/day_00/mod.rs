@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 
 use crate::Problem;
 
@@ -7,7 +7,7 @@ pub struct Solution {
 }
 
 impl Problem for Solution {
-    //fn parse(&self) -> Result<()> {}
+    //fn parse(&mut self, i: &[u8]) -> Result<()> {}
 
     //fn part1(&self) -> Result<&str> {}
 
