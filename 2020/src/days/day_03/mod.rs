@@ -20,8 +20,9 @@ use nom::{
 // Might move to helper parsers, seems useful
 fn parse(i: &[u8]) -> IResult<&[u8], Grid<bool>> {
     let gridline = terminated(is_a("#."), alt((line_ending, eof)));
-    let grid = fold_many1(gridline, (Vec::new(), 0usize, 0usize), |(mut v, x, y), line: &[u8]| {
+    let grid = fold_many1(gridline, (Vec::new(), 0usize, 0usize), |(mut v, _x, y), line: &[u8]| {
         //dimnension checks?
+        let x = line.len();
         v.extend(line.iter().map(|&b| b == b'#'));
         (v, x, y+1)
     });
@@ -38,7 +39,7 @@ impl Problem for Solution {
     fn part1(&self) -> Result<String> {
         let grid = self.input.as_ref().ok_or(anyhow!("not parsed"))?;
         let walker = grid.walk_fixed((0,0), 3, 1, true, false);
-        let trees = walker.inspect(|c| eprintln!("{:?}", c)).filter(|&c| grid[c]).count();
+        let trees = walker.filter(|&c| grid[c]).count();
         Ok(format!("{}", trees))
     }
 
