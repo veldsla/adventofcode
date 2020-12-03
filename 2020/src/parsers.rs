@@ -2,6 +2,7 @@ use std::fmt::Debug;
 use std::str::FromStr;
 use std::ops::Range;
 
+#[allow(unused)]
 use nom::{
     branch::alt,
     character::complete::{char, digit1, line_ending},
