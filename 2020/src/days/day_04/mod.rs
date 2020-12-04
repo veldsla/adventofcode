@@ -32,28 +32,30 @@ impl PassPort {
     fn is_valid_strict(&self) -> bool {
         vec!["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
             .into_iter()
-            .all(|k| self.0.contains_key(k) && self.check_key(k))
+            .all(|k| self.check_key(k))
     }
 
     fn check_key(&self, key: &str) -> bool {
-        let val: &str = &self.0[key];
-        match key {
-            "byr" => year(val, 1920, 2002).is_ok(),
-            "iyr" => year(val, 2010, 2020).is_ok(),
-            "eyr" => year(val, 2020, 2030).is_ok(),
-            "hgt" => height(val).is_ok(),
-            "hcl" => hair(val).is_ok(),
-            "ecl" => val == "amb" || val == "blu" || val == "brn" || val == "gry" || val == "grn" || val == "hzl" || val == "oth",
-            "pid" => val.len() == 9,
-            _ => true
+        if let Some(val) = &self.0.get(key) {
+            match key {
+                "byr" => year(val, 1920, 2002).is_ok(),
+                "iyr" => year(val, 2010, 2020).is_ok(),
+                "eyr" => year(val, 2020, 2030).is_ok(),
+                "hgt" => height(val).is_ok(),
+                "hcl" => hair(val).is_ok(),
+                "ecl" => val == &"amb" || val == &"blu" || val == &"brn" || val == &"gry" || val == &"grn" || val == &"hzl" || val == &"oth",
+                "pid" => val.len() == 9,
+                _ => true
+            }
+        } else {
+            false
         }
-
     }
 }
 
 fn parse(i: &str) -> IResult<&str, Vec<PassPort>> {
     let item = separated_pair(take(3usize), char(':'), terminated(is_not("\r\n "), alt((space1, line_ending))));
-    let passport = fold_many1(item, PassPort(HashMap::new()), |mut pp: PassPort, (key, value):(&str, &str)| {
+    let passport = fold_many1(item, PassPort(HashMap::new()), |mut pp: PassPort, (key, value): (&str, &str)| {
         pp.0.insert(key.to_owned(), value.to_owned());
         pp
     });
