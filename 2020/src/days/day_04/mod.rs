@@ -77,9 +77,7 @@ fn height(i: &str) -> IResult<&str, (&str, &str)> {
         if let Ok(n) = n.parse::<u8>() {
             match unit {
                 &"in" if n >= 59 && n <= 76 => true,
-                &"in" => false,
                 &"cm" if n >= 150 && n <= 193 => true,
-                &"cm" => false,
                 _=> false,
             }
         } else {
@@ -110,6 +108,7 @@ impl Problem for Solution {
     }
 }
 
+#[cfg(test)]
 mod tests {
     use super::parse;
 
