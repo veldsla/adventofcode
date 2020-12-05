@@ -9,8 +9,8 @@ pub struct Solution {
 impl Problem for Solution {
     //fn parse(&mut self, i: &[u8]) -> Result<()> {}
 
-    //fn part1(&self) -> Result<&str> {}
+    //fn part1(&self) -> Result<String> {}
 
-    //fn part2(&self) -> Result<&str> {}
+    //fn part2(&self) -> Result<String> {}
 }
 
