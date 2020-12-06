@@ -19,7 +19,7 @@ use nom::{
 };
 fn parse(i: &[u8]) -> IResult<&[u8], Vec<(Vec<u8>, usize)>> {
     let person =  terminated(take_while1(is_alphabetic), line_ending);
-    let group = fold_many1(person , (Vec::new(), 0), |(mut v, n), p| {
+    let group = fold_many1(person, (Vec::new(), 0), |(mut v, n), p| {
         v.extend(p);
         (v, n+1)
     });
@@ -39,7 +39,7 @@ impl Problem for Solution {
         for g in &self.groups {
             let mut letters = [0; 26];
             for &q in &g.0 {
-                letters[q as usize - 97 ] += 1;
+                letters[q as usize - 97] += 1;
             }
             n_yes += letters.iter().filter(|&&l| l > 0).count();
         }
@@ -52,7 +52,7 @@ impl Problem for Solution {
         for g in &self.groups {
             let mut letters = [0; 26];
             for &q in &g.0 {
-                letters[q as usize - 97 ] += 1;
+                letters[q as usize - 97] += 1;
             }
             n_yes += letters.iter().filter(|&&l| l == g.1).count();
         }
