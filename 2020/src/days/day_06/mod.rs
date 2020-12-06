@@ -37,11 +37,11 @@ impl Problem for Solution {
         //optimized version assumes no duplicate answers by persons
         let mut n_yes = 0;
         for g in &self.groups {
-            let mut letters = [0; 26];
+            let mut letters = 0u32;
             for &q in &g.0 {
-                letters[q as usize - 97] += 1;
+                letters |= 1 << q - b'a';
             }
-            n_yes += letters.iter().filter(|&&l| l > 0).count();
+            n_yes += letters.count_ones();
         }
         Ok(format!("{}", n_yes))
     }
