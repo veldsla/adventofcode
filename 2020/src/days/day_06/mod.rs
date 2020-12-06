@@ -1,11 +1,10 @@
-use std::collections::{HashSet, HashMap};
 use anyhow::{anyhow, Result};
 
 use crate::Problem;
 
 #[derive(Default)]
 pub struct Solution {
-    groups: Vec<Vec<Vec<u8>>>
+    groups: Vec<(Vec<u8>, usize)>,
 }
 
 use nom::{
@@ -13,15 +12,18 @@ use nom::{
     bytes::complete::take_while1,
     character::is_alphabetic,
     character::complete::line_ending,
-    multi::many1,
-    combinator::{all_consuming, eof, map},
+    multi::{many1, fold_many1},
+    combinator::{all_consuming, eof},
     sequence::terminated,
     IResult
 };
-fn parse(i: &[u8]) -> IResult<&[u8], Vec<Vec<Vec<u8>>>> {
-    let person =  map(terminated(take_while1(is_alphabetic), line_ending), |s: &[u8]| s.to_vec());
-    let group = terminated(many1(person), alt((line_ending, eof)));
-    all_consuming(many1(group))(i)
+fn parse(i: &[u8]) -> IResult<&[u8], Vec<(Vec<u8>, usize)>> {
+    let person =  terminated(take_while1(is_alphabetic), line_ending);
+    let group = fold_many1(person , (Vec::new(), 0), |(mut v, n), p| {
+        v.extend(p);
+        (v, n+1)
+    });
+    all_consuming(many1(terminated(group, alt((line_ending, eof)))))(i)
 }
 
 impl Problem for Solution {
@@ -32,31 +34,28 @@ impl Problem for Solution {
     }
 
     fn part1(&self) -> Result<String> {
-        let n_yes:usize = self.groups
-            .iter()
-            .map(|g| {
-                g.iter().flat_map(|p| p)
-                    .collect::<HashSet<_>>()
-                    .len()
-            }).sum();
-
+        //optimized version assumes no duplicate answers by persons
+        let mut n_yes = 0;
+        for g in &self.groups {
+            let mut letters = [0; 26];
+            for &q in &g.0 {
+                letters[q as usize - 97 ] += 1;
+            }
+            n_yes += letters.iter().filter(|&&l| l > 0).count();
+        }
         Ok(format!("{}", n_yes))
     }
 
     fn part2(&self) -> Result<String> {
-        let mut counter = HashMap::new();
+        //optimized version assumes no duplicate answers by persons
         let mut n_yes = 0;
         for g in &self.groups {
-            counter.clear();
-            for p in g {
-                for q in p {
-                    let c = counter.entry(q).or_insert(0);
-                    *c += 1;
-                }
+            let mut letters = [0; 26];
+            for &q in &g.0 {
+                letters[q as usize - 97 ] += 1;
             }
-            n_yes += counter.values().filter(|&&v| v == g.len()).count();
+            n_yes += letters.iter().filter(|&&l| l == g.1).count();
         }
-
         Ok(format!("{}", n_yes))
     }
 }
@@ -83,6 +82,7 @@ b
     #[test]
     fn p1() {
         let p = parse(TEST);
+        println!("{:?}", p);
         assert!(p.is_ok());
     }
 }
