@@ -1,4 +1,4 @@
-use std::collections::{HashSet, HashMap};
+use std::collections::{HashMap, HashSet};
 use std::str;
 
 use anyhow::{anyhow, Result};
@@ -9,7 +9,7 @@ type Rules = HashMap<Color, Vec<(usize, Color)>>;
 
 #[derive(Default)]
 pub struct Solution {
-    rules: HashMap<Color, Vec<(usize, Color)>>
+    rules: HashMap<Color, Vec<(usize, Color)>>,
 }
 
 #[derive(Debug, Eq, PartialEq, Hash)]
@@ -21,26 +21,37 @@ struct Color {
 use nom::{
     branch::alt,
     bytes::complete::tag,
-    character::complete::{char, digit1, alpha1, line_ending, space1},
-    multi::{many1, separated_list1},
+    character::complete::{alpha1, char, digit1, line_ending, space1},
     combinator::{all_consuming, eof, map},
+    multi::{many1, separated_list1},
     sequence::{separated_pair, terminated, tuple},
     IResult,
 };
 
 //separate function because the use in numcol caused a move
 fn color(i: &str) -> IResult<&str, Color> {
-    map(separated_pair(alpha1, space1, alpha1), |(m, c): (&str, &str)| {
-        Color { modifier: m.to_owned(), color: c.to_owned() }
-    })(i)
+    map(
+        separated_pair(alpha1, space1, alpha1),
+        |(m, c): (&str, &str)| Color {
+            modifier: m.to_owned(),
+            color: c.to_owned(),
+        },
+    )(i)
 }
 
 fn parse(i: &str) -> IResult<&str, Vec<(Color, Vec<(usize, Color)>)>> {
     let outer = terminated(color, tag(" bags contain "));
-    let numcol = map(terminated(separated_pair(digit1, space1, color), alt((tag(" bags"), tag(" bag")))),
-        |(n, c)| (n.parse::<usize>().unwrap(), c));
-    let inner = alt((separated_list1(tag(", "), numcol),
-        map(tag("no other bags"), |_| Vec::new())));
+    let numcol = map(
+        terminated(
+            separated_pair(digit1, space1, color),
+            alt((tag(" bags"), tag(" bag"))),
+        ),
+        |(n, c)| (n.parse::<usize>().unwrap(), c),
+    );
+    let inner = alt((
+        separated_list1(tag(", "), numcol),
+        map(tag("no other bags"), |_| Vec::new()),
+    ));
     let rule = tuple((outer, terminated(inner, char('.'))));
     all_consuming(many1(terminated(rule, alt((line_ending, eof)))))(i)
 }
@@ -49,21 +60,22 @@ fn can_contain(bag: &Color, l: &Rules) -> usize {
     let mut seen = HashSet::new();
     let mut queue = vec![bag];
 
-    let inner_to_outer = l.iter()
-        .fold(HashMap::new(), |mut hm, (outer, inner)| {
-            for (_, color) in inner {
-                let e = hm.entry(color).or_insert_with(Vec::new);
-                e.push(outer);
-            }
-            hm
-        });
+    let inner_to_outer = l.iter().fold(HashMap::new(), |mut hm, (outer, inner)| {
+        for (_, color) in inner {
+            let e = hm.entry(color).or_insert_with(Vec::new);
+            e.push(outer);
+        }
+        hm
+    });
+
     loop {
         if let Some(want) = queue.pop() {
             if !seen.insert(want) {
                 continue;
             }
             if let Some(outer) = inner_to_outer.get(want) {
-                queue.extend(outer.iter().filter(|&e| seen.contains(e)));
+                //filtering here doesn't seem to help
+                queue.extend(outer);
             }
         } else {
             return seen.len() - 1;
@@ -78,7 +90,7 @@ fn contains(bag: &Color, l: &Rules) -> usize {
         if let Some((want, n)) = queue.pop() {
             if let Some(contains) = l.get(want) {
                 for (num, color) in contains {
-                    count += n*num;
+                    count += n * num;
                     queue.push((color, *num * n));
                 }
             }
@@ -86,7 +98,6 @@ fn contains(bag: &Color, l: &Rules) -> usize {
             return count;
         }
     }
-
 }
 
 impl Problem for Solution {
@@ -97,12 +108,18 @@ impl Problem for Solution {
     }
 
     fn part1(&self) -> Result<String> {
-        let wanted = Color { modifier: "shiny".to_owned(), color: "gold".to_owned() };
+        let wanted = Color {
+            modifier: "shiny".to_owned(),
+            color: "gold".to_owned(),
+        };
         Ok(format!("{}", can_contain(&wanted, &self.rules)))
     }
 
     fn part2(&self) -> Result<String> {
-        let wanted = Color { modifier: "shiny".to_owned(), color: "gold".to_owned() };
+        let wanted = Color {
+            modifier: "shiny".to_owned(),
+            color: "gold".to_owned(),
+        };
         Ok(format!("{}", contains(&wanted, &self.rules)))
     }
 }
@@ -136,11 +153,14 @@ dark violet bags contain no other bags.
         let l: Rules = result.unwrap().1.into_iter().collect();
 
         assert_eq!(l.len(), 9);
-        let wanted = Color { modifier: "shiny".to_owned(), color: "gold".to_owned() };
+        let wanted = Color {
+            modifier: "shiny".to_owned(),
+            color: "gold".to_owned(),
+        };
         assert_eq!(can_contain(&wanted, &l), 4);
 
+        // P2
         assert_eq!(contains(&wanted, &l), 32);
-
         let l: Rules = parse(P2).unwrap().1.into_iter().collect();
         assert_eq!(contains(&wanted, &l), 126);
     }
