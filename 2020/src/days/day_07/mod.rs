@@ -54,7 +54,7 @@ fn can_contain(bag: &Color, l: &Rules) -> usize {
                 continue;
             }
             for rule in l {
-                if !seen.contains(&rule.0) && rule.1.iter().any(|(_, c)| c == want) {
+                if rule.1.iter().any(|(_, c)| c == want) {
                     queue.push(&rule.0);
                 }
             }
