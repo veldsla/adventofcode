@@ -48,15 +48,22 @@ fn parse(i: &str) -> IResult<&str, Vec<(Color, Vec<(usize, Color)>)>> {
 fn can_contain(bag: &Color, l: &Rules) -> usize {
     let mut seen = HashSet::new();
     let mut queue = vec![bag];
+
+    let inner_to_outer = l.iter()
+        .fold(HashMap::new(), |mut hm, (outer, inner)| {
+            for (_, color) in inner {
+                let e = hm.entry(color).or_insert_with(Vec::new);
+                e.push(outer);
+            }
+            hm
+        });
     loop {
         if let Some(want) = queue.pop() {
             if !seen.insert(want) {
                 continue;
             }
-            for rule in l {
-                if rule.1.iter().any(|(_, c)| c == want) {
-                    queue.push(&rule.0);
-                }
+            if let Some(outer) = inner_to_outer.get(want) {
+                queue.extend(outer);
             }
         } else {
             return seen.len() - 1;
