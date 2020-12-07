@@ -12,17 +12,13 @@ pub struct Solution {
     rules: HashMap<Color, Vec<(usize, Color)>>,
 }
 
-#[derive(Debug, Eq, PartialEq, Hash)]
-struct Color {
-    modifier: String,
-    color: String,
-}
+type Color = String;
 
 use nom::{
     branch::alt,
     bytes::complete::tag,
     character::complete::{alpha1, char, digit1, line_ending, space1},
-    combinator::{all_consuming, eof, map},
+    combinator::{all_consuming, eof, map, recognize},
     multi::{many1, separated_list1},
     sequence::{separated_pair, terminated, tuple},
     IResult,
@@ -31,11 +27,8 @@ use nom::{
 //separate function because the use in numcol caused a move
 fn color(i: &str) -> IResult<&str, Color> {
     map(
-        separated_pair(alpha1, space1, alpha1),
-        |(m, c): (&str, &str)| Color {
-            modifier: m.to_owned(),
-            color: c.to_owned(),
-        },
+        recognize(separated_pair(alpha1, space1, alpha1)),
+        |c: &str| c.to_owned()
     )(i)
 }
 
@@ -108,18 +101,12 @@ impl Problem for Solution {
     }
 
     fn part1(&self) -> Result<String> {
-        let wanted = Color {
-            modifier: "shiny".to_owned(),
-            color: "gold".to_owned(),
-        };
+        let wanted = "shiny gold".to_owned();
         Ok(format!("{}", can_contain(&wanted, &self.rules)))
     }
 
     fn part2(&self) -> Result<String> {
-        let wanted = Color {
-            modifier: "shiny".to_owned(),
-            color: "gold".to_owned(),
-        };
+        let wanted = "shiny gold".to_owned();
         Ok(format!("{}", contains(&wanted, &self.rules)))
     }
 }
@@ -153,10 +140,7 @@ dark violet bags contain no other bags.
         let l: Rules = result.unwrap().1.into_iter().collect();
 
         assert_eq!(l.len(), 9);
-        let wanted = Color {
-            modifier: "shiny".to_owned(),
-            color: "gold".to_owned(),
-        };
+        let wanted = "shiny gold".to_owned();
         assert_eq!(can_contain(&wanted, &l), 4);
 
         // P2
