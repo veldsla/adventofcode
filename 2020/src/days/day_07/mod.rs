@@ -63,7 +63,7 @@ fn can_contain(bag: &Color, l: &Rules) -> usize {
                 continue;
             }
             if let Some(outer) = inner_to_outer.get(want) {
-                queue.extend(outer);
+                queue.extend(outer.iter().filter(|&e| seen.contains(e)));
             }
         } else {
             return seen.len() - 1;
