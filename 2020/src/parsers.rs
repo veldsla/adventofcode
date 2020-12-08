@@ -25,7 +25,7 @@ pub fn parse_i32(i: &str) -> IResult<&str, i32> {
 }
 
 pub fn positive_integer<N: FromStr>(i: &str) -> IResult<&str, N> {
-    map_res(digit1, |number: &str| number.parse::<N>())(i)
+    map_res(preceded(opt(char('+')), digit1), |number: &str| number.parse::<N>())(i)
 }
 
 fn negative<N: std::ops::Neg + std::ops::Neg<Output = N>>(n: N) -> N { n.neg() }
@@ -70,6 +70,7 @@ mod tests {
         //signed integers can be parsed into any signed type
         assert_eq!(signed_integer::<i32>("123"), Ok(("", 123)));
         assert_eq!(signed_integer::<i32>("-123"), Ok(("", -123)));
+        assert_eq!(signed_integer::<i32>("+123"), Ok(("", 123)));
         assert!(signed_integer::<i8>("-300").is_err());
         assert!(signed_integer::<i8>("300").is_err());
 

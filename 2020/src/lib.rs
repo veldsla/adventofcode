@@ -25,6 +25,7 @@ pub trait Problem {
 pub mod days;
 pub mod parsers;
 pub mod grid;
+pub mod vm;
 
 pub fn run_day<I: AsRef<Path>>(day: u32, input: I) -> Result<()> {
     let mut p = days::get_solution(day)?;
