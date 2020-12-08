@@ -66,7 +66,7 @@ impl Problem for Solution {
 
     fn part2(&self) -> Result<String> {
         let acc_ok = (0..self.program.len())
-            .filter(|&i| matches!(self.program[i], Instr::Jmp(_)))
+            .filter(|&i| !matches!(self.program[i], Instr::Acc(_)))
             .find_map(|mut_ins| {
                 let mut vm = Vm::from_program(mutate(&self.program[..], mut_ins));
                 if vm.run().is_ok() {
