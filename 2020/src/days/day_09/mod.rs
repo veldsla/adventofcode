@@ -71,6 +71,7 @@ impl Problem for Solution {
     }
 
     fn part2(&self) -> Result<String> {
+        //FIXME not rerunning part 1 makes this specific for my input....
         Ok(format!("{}", find_sum(&self.input, 1930745883)?))
     }
 }
