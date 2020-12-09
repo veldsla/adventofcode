@@ -17,7 +17,7 @@ pub struct Solution {
 }
 
 fn find_invalid(v: &[u64], prefix: usize) -> Result<u64> {
-    let mut sums: Vec<u64> = Vec::with_capacity((prefix * prefix-1) / 2);
+    let mut sums: Vec<u64> = Vec::with_capacity((prefix * (prefix-1)) / 2);
     let mut in_sum: Vec<Vec<usize>> = std::iter::repeat(Vec::with_capacity(prefix)).take(prefix).collect();
 
     for p1 in 0..prefix-1 {
@@ -28,6 +28,7 @@ fn find_invalid(v: &[u64], prefix: usize) -> Result<u64> {
             in_sum[p2].push(sums.len() - 1);
         }
     }
+
     for (i, &num) in v[prefix..].iter().enumerate() {
         if !sums.contains(&num) {
             return Ok(num);
@@ -42,18 +43,18 @@ fn find_invalid(v: &[u64], prefix: usize) -> Result<u64> {
 }
 
 fn find_sum(v: &[u64], sum: u64) -> Result<u64> {
-
     for (start, &value) in v.iter().enumerate() {
         if let Some(pos) = v.iter().skip(start+1)
             .scan(value, |total, &n| { *total += n; Some(*total) })
             .take_while(|&v| v <= sum)
-            .position(|v| { v == sum })
+            .position(|v| v == sum)
         {
             let min = v[start..start+pos+2].iter().min().unwrap();
             let max = v[start..start+pos+2].iter().max().unwrap();
             return Ok(min + max);
         }
     }
+
     Err(anyhow!("No solution"))
 }
 
