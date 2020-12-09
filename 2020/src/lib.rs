@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 use std::fs::File;
 use std::io::Read;
-use std::time::Instant;
+use std::time::{Instant, Duration};
 
 use anyhow::{anyhow, Result};
 use tabular::{Table, row};
@@ -53,7 +53,9 @@ pub fn run_day<I: AsRef<Path>>(day: u32, input: I) -> Result<()> {
 pub fn run_all() -> Result<()> {
     let mut table = Table::new("{:<} {:<} {:<} {:<} {:<} {:<} {:<}");
     table.add_row(row!("day", "parse", "part1", "part2", "total", "output",""));
-    let t0 = Instant::now();
+    let mut parse_time = Duration::new(0,0);
+    let mut solution_time = Duration::new(0,0);
+    let run_time = Instant::now();
     for day in 1..25 {
         let mut p = days::get_solution(day)?;
         if let Ok(mut f) = File::open(PathBuf::from(format!("inputs/day_{:02}.txt", day))) {
@@ -62,18 +64,22 @@ pub fn run_all() -> Result<()> {
             f.read_to_end(&mut b)?;
             p.parse(&b)?;
             let tp = t.elapsed();
+            parse_time += tp;
+
             let t = Instant::now();
             let res1 = p.part1()?;
             let tp1 = t.elapsed();
+            solution_time += tp1;
 
             let t = Instant::now();
             let res2 = p.part2()?;
             let tp2 = t.elapsed();
+            solution_time += tp2;
             //println!("{:?}\t{:?}\t\t{:?}\t{:?}\t{:?}\tout:{}, {}", day,  tp, tp1, tp2, tp+tp1+tp2, res1, res2);
             table.add_row(row!(day, format!("{:?}", tp), format!("{:?}",tp1), format!("{:?}",tp2), format!("{:?}",tp+tp1+tp2), res1, res2));
         }
     }
-   table.add_row(row!("all", "","","", format!("{:?}", t0.elapsed()),"",""));
+   table.add_row(row!("all", format!("{:?}", parse_time),"",format!("{:?}", solution_time), format!("{:?}", run_time.elapsed()),"",""));
    print!("{}", table);
    //println!("real time:\t{:?}", t0.elapsed());
 
