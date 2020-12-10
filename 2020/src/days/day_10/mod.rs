@@ -38,16 +38,19 @@ fn count_valid(v: &[u8]) -> usize {
     s.push(0);
 
     let mut from_jolt = vec![0; s.len()];
-    //only one possibility from max value
 
+    //only one possibility from max value
     from_jolt[0] = 1;
+
     for (pos, current) in s.iter().enumerate() {
         //get compatible with current
-        for (p, _v) in s[pos+1..].iter().enumerate().take_while(|(_, &v)| current - v <= 3) {
-            //add value of current to set
-            from_jolt[p+pos+1] += from_jolt[pos];
-        }
+        s.iter()
+            .enumerate()
+            .skip(pos+1)
+            .take_while(|(_, &v)| current - v <= 3)
+            .for_each(|(p, _)| from_jolt[p] += from_jolt[pos]);
     }
+
     *from_jolt.last().unwrap()
 }
 
@@ -91,6 +94,4 @@ mod tests {
             9, 4, 2, 34, 10, 3];
         assert_eq!(count_valid(&v),19208);
     }
-
-
 }
