@@ -36,12 +36,11 @@ fn count_valid(v: &[u8]) -> usize {
     let mut s: Vec<_> = v.iter().copied().collect();
     s.sort_unstable_by(|a, b| b.cmp(a));
     s.push(0);
-    println!("{:?}", s);
 
     let mut from_jolt = vec![0; s.len()];
     //only one possibility from max value
 
-    from_jolt[0] = 1usize;
+    from_jolt[0] = 1;
     for (pos, current) in s.iter().enumerate() {
         //get compatible with current
         for (p, _v) in s[pos+1..].iter().enumerate().take_while(|(_, &v)| current - v <= 3) {
