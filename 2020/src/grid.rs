@@ -1,7 +1,8 @@
 use std::convert::TryFrom;
+use std::fmt;
 use std::ops::{Add, Index};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Default)]
 pub struct Grid<T> {
     pub dim_x: usize,
     pub dim_y: usize,
@@ -38,14 +39,28 @@ impl<T> Grid<T> {
     pub fn walk_fixed<C: Into<Coord>>(&self, from: C, dx: isize, dy: isize, wrap_x: bool, wrap_y: bool) -> Walker {
         Walker {position: from.into(), dx, dy, max_x:self.dim_x, max_y: self.dim_y, wrap_x, wrap_y }
     }
+
 }
 
 impl<T> Index<Coord> for Grid<T> {
     type Output = T;
 
+    //FIXME needs better oob check
     fn index(&self, c: Coord) -> &Self::Output {
         let pos = c.x + c.y * self.dim_x as isize;
         &self.elements[usize::try_from(pos).expect("Cannot index negative coords")]
+    }
+}
+
+impl fmt::Display for Grid<u8> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result{
+        for p in (0..self.elements.len()).step_by(self.dim_x) {
+            for &e in &self.elements[p..p + self.dim_x] {
+                write!(f, "{} ",char::from(e))?;
+            }
+            writeln!(f, "")?;
+        }
+        Ok(())
     }
 }
 
