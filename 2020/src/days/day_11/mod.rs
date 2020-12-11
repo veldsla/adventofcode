@@ -179,7 +179,7 @@ fn life_it(g: &mut Grid<u8>, skip_floor: bool, allowed: usize) {
                     }
                 },
                 b'#' => {
-                    //occupied, leave if 4+ adjacent also occupied
+                    //occupied, leave if allowed+ adjacent also occupied
                     if adjacent[i].iter().filter(|&&a| g.elements[a] == b'#').nth(allowed-1).is_some() {
                         Some((i, b'L'))
                     } else {
