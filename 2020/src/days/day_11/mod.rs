@@ -164,11 +164,11 @@ fn adjacent_skip_floor(g: &Grid<u8>) -> Vec<Vec<usize>> {
     }).collect()
 }
 
-type Change = (usize, u8);
 fn life_it(g: &mut Grid<u8>, skip_floor: bool, allowed: usize) {
     let adjacent =  if skip_floor { adjacent_skip_floor(g) } else { adjacent(g) };
+    let mut changes = Vec::new();
     loop {
-        let changes: Vec<Change> = g.elements.iter().enumerate().filter(|(_, &e)| e != b'.').filter_map(|(i, &e)| {
+        changes.extend(g.elements.iter().enumerate().filter_map(|(i, &e)| {
             match e {
                 b'L' => {
                     //empty,occupy if no occupied  adjacent
@@ -180,7 +180,7 @@ fn life_it(g: &mut Grid<u8>, skip_floor: bool, allowed: usize) {
                 },
                 b'#' => {
                     //occupied, leave if 4+ adjacent also occupied
-                    if adjacent[i].iter().filter(|&&a| g.elements[a] == b'#').count() >= allowed {
+                    if adjacent[i].iter().filter(|&&a| g.elements[a] == b'#').nth(allowed).is_some() {
                         Some((i, b'L'))
                     } else {
                         None
@@ -188,15 +188,16 @@ fn life_it(g: &mut Grid<u8>, skip_floor: bool, allowed: usize) {
                 },
                 _ => None
             }
-        }).collect();
+        }));
 
         if changes.is_empty() {
             break;
         }
 
-        for c in changes {
+        for c in &changes {
             g.elements[c.0] = c.1;
         }
+        changes.clear();
     }
 }
 
