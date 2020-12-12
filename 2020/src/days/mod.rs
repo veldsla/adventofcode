@@ -12,7 +12,7 @@ mod day_08;
 mod day_09;
 mod day_10;
 mod day_11;
-mod day_12 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
+mod day_12;
 mod day_13 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
 mod day_14 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
 mod day_15 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
@@ -41,7 +41,7 @@ pub fn get_solution(d: u32) -> Result<Box<dyn Problem>> {
         9 => Ok(Box::new(day_09::Solution::default())),
         10 => Ok(Box::new(day_10::Solution::default())),
         11 => Ok(Box::new(day_11::Solution::default())),
-        12 => Ok(Box::new(day_13::Solution::default())),
+        12 => Ok(Box::new(day_12::Solution::default())),
         13 => Ok(Box::new(day_13::Solution::default())),
         14 => Ok(Box::new(day_14::Solution::default())),
         15 => Ok(Box::new(day_15::Solution::default())),
