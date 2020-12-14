@@ -52,15 +52,6 @@ fn parse(i: &str) -> IResult<&str,Vec<Operation>> {
     all_consuming(many1(alt((mask_line, terminated(mem_line, line_ending)))))(i)
 }
 
-fn set_zero<T: std::ops::BitAnd<Output=T> + std::ops::Not<Output=T>>(v: T, mask: T) -> T {
-    v & mask
-}
-
-fn set_one<T: std::ops::BitOr<Output=T>>(v: T, mask: T) -> T{
-    v | mask
-}
-
-
 fn run_program(p: &[Operation]) -> u64{
     //determine mem size
     let max_mem = p.iter().filter_map(|o| match o {
@@ -75,8 +66,8 @@ fn run_program(p: &[Operation]) -> u64{
         match o {
             &Operation::Mask(or, not) => { mask_one = or; mask_zero = not; },
             &Operation::Mem(addr, val) => { 
-                let val = set_zero(val, mask_zero);
-                let val = set_one(val, mask_one);
+                let val = val & mask_zero;
+                let val = val | mask_one;
                 mem[addr] = val;
             },
         }
