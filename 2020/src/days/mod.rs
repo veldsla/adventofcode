@@ -16,7 +16,7 @@ mod day_12;
 mod day_13;
 mod day_14;
 mod day_15;
-mod day_16 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
+mod day_16;
 mod day_17 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
 mod day_18 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
 mod day_19 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}

@@ -7,7 +7,7 @@ use nom::{
     branch::alt,
     character::complete::{char, digit1, line_ending},
     combinator::{map, map_res, opt},
-    multi::{many0, many1},
+    multi::{many0, many1, separated_list1},
     sequence::{preceded, separated_pair, terminated, tuple},
     IResult
 };
@@ -36,6 +36,14 @@ pub fn negative_integer<N: Debug + FromStr + std::ops::Neg + std::ops::Neg<Outpu
 //Debug required for error?
 pub fn signed_integer<N: Debug + FromStr + std::ops::Neg + std::ops::Neg<Output = N>>(i: &str) -> IResult<&str, N> {
     alt((positive_integer, negative_integer))(i)
+}
+
+pub fn range_positive_integer<N: FromStr>(i: &str) -> IResult<&str, std::ops::RangeInclusive<N>> {
+    map(separated_pair(positive_integer, char('-'), positive_integer), |(b, e)| b..=e)(i)
+}
+
+pub fn commasep_positive_integer<N: FromStr>(i: &str) -> IResult<&str, Vec<N>> {
+    separated_list1(char(','), positive_integer)(i)
 }
 
 pub fn int_range_inclusive(i: &str) -> IResult<&str, Range<i32>> {
