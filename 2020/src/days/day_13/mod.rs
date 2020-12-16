@@ -77,7 +77,6 @@ impl Problem for Solution {
             .filter(|(_, v)| v.is_some())
             .map(|(i, v)| (i as i64, v.unwrap() as i64))
             .collect();
-        println!("{:?}", idtime);
         //all line ids are prime. So it seems I finally have to look into the chinese
         //remainder theorem. Forgive me my implementation, total noob here.
         Ok(format!("{}", solve_rem(&idtime)))
