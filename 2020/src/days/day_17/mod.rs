@@ -37,9 +37,9 @@ impl Grid {
     }
 
     fn create_neighbors(&mut self, c: (i32, i32, i32)) {
-        for &x in &neigh(c.0) {
-            for &y in &neigh(c.1) {
-                for &z in &neigh(c.2) {
+        for x in neigh(c.0) {
+            for y in neigh(c.1) {
+                for z in neigh(c.2) {
                     self.0.entry((x,y,z)).or_insert(b'.');
                 }
             }
@@ -67,9 +67,9 @@ impl Grid {
     fn neighbors_active(&self, c: &(i32, i32, i32)) -> usize {
         let s = self.0.get(&c).expect("oob");
         let mut count = 0;
-        for &x in &neigh(c.0) {
-            for &y in &neigh(c.1) {
-                for &z in &neigh(c.2) {
+        for x in neigh(c.0) {
+            for y in neigh(c.1) {
+                for z in neigh(c.2) {
                     if let Some(&b'#') = self.0.get(&(x,y,z)) {
                         count += 1;
                     }
@@ -103,10 +103,10 @@ impl HyperGrid {
     }
 
     fn create_neighbors(&mut self, c: (i32, i32, i32, i32)) {
-        for &x in &neigh(c.0) {
-            for &y in &neigh(c.1) {
-                for &z in &neigh(c.2) {
-                    for &w in &neigh(c.3) {
+        for x in neigh(c.0) {
+            for y in neigh(c.1) {
+                for z in neigh(c.2) {
+                    for w in neigh(c.3) {
                         self.0.entry((x, y, z, w)).or_insert(b'.');
                     }
                 }
@@ -135,10 +135,10 @@ impl HyperGrid {
     fn neighbors_active(&self, c: &(i32, i32, i32, i32)) -> usize {
         let s = self.0.get(&c).expect("oob");
         let mut count = 0;
-        for &x in &neigh(c.0) {
-            for &y in &neigh(c.1) {
-                for &z in &neigh(c.2) {
-                    for &w in &neigh(c.3) {
+        for x in neigh(c.0) {
+            for y in neigh(c.1) {
+                for z in neigh(c.2) {
+                    for w in neigh(c.3) {
                         if let Some(&b'#') = self.0.get(&(x, y, z, w)) {
                             count += 1;
                         }
@@ -156,8 +156,8 @@ impl HyperGrid {
 }
 
 #[inline]
-fn neigh(i: i32) -> [i32; 3] {
-    [i - 1, i, i + 1]
+fn neigh(i: i32) -> std::ops::Range<i32> {
+    i - 1..i + 2
 }
 
 fn parse(i: &[u8]) -> IResult<&[u8], Grid> {
