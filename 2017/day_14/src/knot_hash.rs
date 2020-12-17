@@ -3,8 +3,7 @@
 const SALT: [u8; 5] = [17,31,73,47,23];
 
 fn rearrange(lengths: &[u8], loops: usize) -> (u16, Vec<u8>) {
-    //this is weird.....
-    let mut v: Vec<u8> = (0..256u16).map(|i| i as u8).collect();
+    let mut v: Vec<u8> = (0..).take(256).collect();
 
     let mut skip = 0;
     let mut pos = 0;

@@ -190,7 +190,7 @@ impl Problem for Solution {
     }
 
     fn part2(&self) -> Result<String> {
-        let mut hypergrid = HyperGrid::from_grid(&self.input);;
+        let mut hypergrid = HyperGrid::from_grid(&self.input);
         for _i in 0..6 {
             hypergrid.step_life();
         }
