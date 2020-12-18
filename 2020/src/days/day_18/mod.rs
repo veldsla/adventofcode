@@ -69,7 +69,6 @@ fn parse(i: &str) -> IResult<&str, u64> {
 //part 2
 fn addition(i: &str) -> IResult<&str, u64> {
     map(separated_list1(terminated(preceded(space0, char('+')), space0), alt((positive_integer, nested_expression2))), |v| v.iter().sum())(i)
-    //fold_many1(preceded(terminated(preceded(space0, char('+')), space0), value), 0, |acc, val| acc + val)(i)
 }
 
 fn product(i: &str) -> IResult<&str, u64> {
