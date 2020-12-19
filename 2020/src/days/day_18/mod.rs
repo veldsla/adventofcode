@@ -7,8 +7,8 @@ use crate::Problem;
 use nom::{
     branch::alt,
     character::complete::{char, line_ending, one_of, space0},
-    combinator::{map, iterator},
-    multi::{fold_many1, separated_list1},
+    combinator::map,
+    multi::{fold_many0, fold_many1, separated_list1},
     combinator::all_consuming,
     sequence::{delimited, preceded, terminated, tuple},
     IResult, Parser
@@ -57,16 +57,13 @@ fn value(i: &str) -> IResult<&str, u64> {
 
 fn no_precedence(i: &str) -> IResult<&str, u64> {
     let (i, v) = value(i)?;
-    let mut it = iterator(i, tuple((space_padded(operator), value)));
-    let result = it.fold(v, |mut acc, (op, val)| {
+    fold_many1(tuple((space_padded(operator), value)), v, |mut acc, (op, val)| {
         match op {
             Op::Add => acc += val,
             Op::Mul => acc *= val,
         }
         acc
-    });
-    let res = it.finish()?;
-    Ok((res.0, result))
+    })(i)
 }
 
 
@@ -88,14 +85,10 @@ fn value2(i: &str) -> IResult<&str, u64> {
 
 fn plus_precedence(i: &str) -> IResult<&str, u64> {
     let (i, v) = value2(i)?;
-    let mut it = iterator(i, product);
-    let result = it.fold(v, |mut acc, val| {
+    fold_many0(product, v, |mut acc, val| {
         acc *= val;
         acc
-    });
-    
-    let res = it.finish()?;
-    Ok((res.0, result))
+    })(i)
 }
 
 // parse according to passed parser
