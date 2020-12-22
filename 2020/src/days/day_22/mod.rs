@@ -1,8 +1,8 @@
-use std::collections::{HashSet, HashMap, VecDeque};
+use std::collections::{hash_map::DefaultHasher, HashSet, VecDeque};
+use std::hash::{Hash, Hasher};
 use std::str;
 
 use anyhow::{anyhow, Result};
-use itertools::Itertools;
 
 use crate::Problem;
 use crate::parsers::positive_integer;
@@ -76,17 +76,10 @@ fn play_rec(d1: &[u8], d2: &[u8]) -> usize {
     }
 }
 
-fn hash(v: &VecDeque<u8>) -> [u64; 5] {
-    //maximum 50 numbers, 6bits wide, 300 bits, 5 u64, 10 numbers per u64
-    let mut i = 0;
-    let mut res = [0; 5];
-    for c in &v.into_iter().chunks(10) {
-        res[i] = c.into_iter()
-            .enumerate()
-            .fold(0, |acc, (i, &v)| acc | (v as u64) << (i as u64 * 6));
-        i += 1;
-    }
-    res
+fn hash<T: Hash>(t: &T) -> u64 {
+    let mut s = DefaultHasher::new();
+    t.hash(&mut s);
+    s.finish()
 }
 
 fn rec_round(p1: &mut VecDeque<u8>, p2: &mut VecDeque<u8>) -> usize {
