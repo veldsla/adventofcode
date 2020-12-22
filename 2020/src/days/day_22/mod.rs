@@ -69,8 +69,7 @@ fn play_rec(d1: &[u8], d2: &[u8]) -> usize {
     let mut player_2: VecDeque<u8> = d2.iter().copied().collect();
     
     // global move cache is about 2x faster
-    let mut result_cache = HashMap::new();
-    match rec_round(&mut player_1, &mut player_2, &mut result_cache) {
+    match rec_round(&mut player_1, &mut player_2) {
         1 | 3  => score(&player_1),
         2  => score(&player_2),
         _ => unreachable!()
@@ -90,8 +89,9 @@ fn hash(v: &VecDeque<u8>) -> [u64; 5] {
     res
 }
 
-fn rec_round(p1: &mut VecDeque<u8>, p2: &mut VecDeque<u8>, result_cache: &mut HashMap<([u64; 5], [u64; 5]), usize>) -> usize {
-    let mut hand_cache = HashSet::new();
+fn rec_round(p1: &mut VecDeque<u8>, p2: &mut VecDeque<u8>) -> usize {
+    let mut hand_cache_1 = HashSet::new();
+    let mut hand_cache_2 = HashSet::new();
     loop {
         if p1.is_empty() {
             return 2;
@@ -102,20 +102,17 @@ fn rec_round(p1: &mut VecDeque<u8>, p2: &mut VecDeque<u8>, result_cache: &mut Ha
         let h1 = hash(p1);
         let h2 = hash(p2);
 
-        if let Some(&result) = result_cache.get(&(h1, h2)) {
-            return result;
-        }
-
-        if hand_cache.contains(&(h1, h2)) {
+        if hand_cache_1.contains(&h1) || hand_cache_2.contains(&h2) {
             return 1;
         }
-        hand_cache.insert((h1, h2));
+        hand_cache_1.insert(h1);
+        hand_cache_2.insert(h2);
 
         let (c1, c2) =  (p1.pop_front().unwrap(), p2.pop_front().unwrap());
         let winner = if p1.len() >= c1 as usize && p2.len() >= c2 as usize {
             let mut p1sub = p1.iter().copied().take(c1 as usize).collect();
             let mut p2sub = p2.iter().copied().take(c2 as usize).collect();
-            rec_round(&mut p1sub, &mut p2sub, result_cache)
+            rec_round(&mut p1sub, &mut p2sub)
 
         } else {
             if c1 > c2 {
@@ -124,7 +121,6 @@ fn rec_round(p1: &mut VecDeque<u8>, p2: &mut VecDeque<u8>, result_cache: &mut Ha
                 2
             }
         };
-        result_cache.insert((h1, h2), winner);
 
         match winner {
             1 => {
