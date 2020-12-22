@@ -93,13 +93,13 @@ impl Problem for Solution {
     }
 
     fn part1(&self) -> Result<String> {
-        let data = self.input.as_ref().ok_or_else(|| anyhow!("Not parsed"))?;
-        let (p1, p2) = decode(data);
-        Ok(format!("{}\t{}", p1, p2))
+        Ok(format!("See part2"))
     }
 
     fn part2(&self) -> Result<String> {
-        Ok(format!("See part1"))
+        let data = self.input.as_ref().ok_or_else(|| anyhow!("Not parsed"))?;
+        let (p1, p2) = decode(data);
+        Ok(format!("{}\t{}", p1, p2))
     }
 }
 
