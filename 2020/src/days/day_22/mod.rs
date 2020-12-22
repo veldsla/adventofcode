@@ -131,7 +131,6 @@ fn rec_round(p1: &mut VecDeque<u8>, p2: &mut VecDeque<u8>) -> usize {
                 p2.push_back(c2);
                 p2.push_back(c1);
             },
-            //3 => { return 3; }
             _ => unreachable!()
         }
     }
