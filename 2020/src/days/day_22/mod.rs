@@ -68,7 +68,6 @@ fn play_rec(d1: &[u8], d2: &[u8]) -> usize {
     let mut player_1: VecDeque<u8> = d1.iter().copied().collect();
     let mut player_2: VecDeque<u8> = d2.iter().copied().collect();
     
-    // global move cache is about 2x faster
     match rec_round(&mut player_1, &mut player_2) {
         1 | 3  => score(&player_1),
         2  => score(&player_2),
