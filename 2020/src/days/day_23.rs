@@ -18,7 +18,7 @@ pub struct Solution {
     cups: Vec<u32>,
 }
 
-// naive solution used in day1
+// naive solution used in part1
 fn play(v: &[u32], n: usize) -> Vec<u32> {
     let max = v.iter().copied().max().unwrap_or(0);
 
@@ -26,7 +26,6 @@ fn play(v: &[u32], n: usize) -> Vec<u32> {
     let mut next_round: Vec<u32> = Vec::with_capacity(cups.len());
 
     for _ in 0..n {
-        ////println!("cups {:?}", cups);
         //a round
         let current = cups[0];
         //find target
@@ -38,12 +37,10 @@ fn play(v: &[u32], n: usize) -> Vec<u32> {
                 break pos;
             }
         };
-        //println!("target pos {}", target_pos);
         next_round.extend(&cups[4..5+target_pos]);
         next_round.extend(&cups[1..4]);
         next_round.extend(&cups[5+target_pos..]);
         next_round.push(current);
-        //println!("next {:?}", next_round);
         std::mem::swap(&mut cups, &mut next_round);
         next_round.clear();
     }
@@ -55,17 +52,17 @@ fn string_from_one(v: &[u32]) -> String {
 }
 
 
+//better solution for part 2
 #[derive(Debug)]
-struct MyLL {
+struct CupsGame {
     data: Vec<u32>,
     links: Vec<usize>,
     map: Vec<usize>,
     origin: usize,
 }
 
-
-impl std::iter::FromIterator<u32> for MyLL {
-    fn from_iter<I: IntoIterator<Item=u32>>(i: I) -> MyLL {
+impl std::iter::FromIterator<u32> for CupsGame {
+    fn from_iter<I: IntoIterator<Item=u32>>(i: I) -> CupsGame {
         let data: Vec<_> = i.into_iter().collect();
         let mut links: Vec<usize> = Vec::with_capacity(data.len());
         let mut  map = vec![0; data.len()+1];
@@ -73,11 +70,11 @@ impl std::iter::FromIterator<u32> for MyLL {
             links.push(if i == data.len() - 1 { 0 } else { i+1 });
             map[v as usize] = i;
         }
-        MyLL { data, links, map, origin: 0 }
+        CupsGame { data, links, map, origin: 0 }
     }
 }
 
-impl MyLL {
+impl CupsGame {
     fn find_target(&mut self) ->(usize, usize) {
         //if any of the next 3 are the target lower it
         let mut target = self.data[self.origin] - 1;
@@ -134,11 +131,11 @@ impl MyLL {
 
 fn play_big(v: &[u32], max: u32, n: usize) -> u64 {
     let l = v.len() as u32;
-    let mut ll: MyLL = v.iter().copied().chain((l + 1)..=max).collect();
+    let mut game: CupsGame = v.iter().copied().chain((l + 1)..=max).collect();
     for _r in 0..n {
-        ll.play_round();
+        game.play_round();
     }
-    ll.mul_after_one()
+    game.mul_after_one()
 }
 
 fn parse(i: &str) -> IResult<&str, Vec<u32>> {
@@ -188,7 +185,6 @@ mod tests {
         println!("{:?}", result);
         assert!(result.is_ok());
         let cups = result.unwrap().1;
-        //let res = play_big(&cups, 9, 10);
         let res = play_big(&cups, 1_000_000, 10_000_000);
         assert_eq!(res, 149245887792);
     }
