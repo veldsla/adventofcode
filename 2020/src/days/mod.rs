@@ -23,8 +23,8 @@ mod day_19;
 mod day_20 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
 mod day_21;
 mod day_22;
-mod day_23 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
-mod day_24 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
+mod day_23;
+mod day_24;
 mod day_25 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
 
 use crate::Problem;
