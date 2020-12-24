@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use anyhow::{anyhow, Result};
+use smallvec::SmallVec;
 
 use crate::Problem;
 
@@ -94,9 +95,9 @@ fn do_life(instr: &[Walk], ndays: usize) -> usize {
     count_flipped(floor)  
 }
 
-fn neighbors(c: (i32, i32)) -> Vec<(i32, i32)> {
+fn neighbors(c: (i32, i32)) -> SmallVec<[(i32, i32); 6]> {
     //common
-    let mut res = Vec::new();
+    let mut res = SmallVec::new();
     res.push((c.0-1, c.1));
     res.push((c.0, c.1-1));
     res.push((c.0, c.1+1));
