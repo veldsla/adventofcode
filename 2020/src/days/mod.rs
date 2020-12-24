@@ -20,7 +20,7 @@ mod day_16;
 mod day_17;
 mod day_18;
 mod day_19;
-mod day_20 {use crate::Problem; #[derive(Default)]pub struct Solution; impl Problem for Solution {}}
+mod day_20;
 mod day_21;
 mod day_22;
 mod day_23;
