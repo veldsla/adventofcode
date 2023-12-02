@@ -3,10 +3,10 @@ use anyhow::{anyhow, Result};
 use nom::{IResult,
 branch::alt,
 bytes::complete::{tag},
-character::complete::{digit1, line_ending},
+character::complete::{digit1, line_ending, space1},
 combinator::{opt},
 multi::{many1, separated_list1},
-sequence::{terminated, separated_pair}
+sequence::{delimited, terminated, separated_pair}
 };
 
 use crate::parsers::{positive_integer};
@@ -47,7 +47,7 @@ impl Game {
 
 
 fn parse_draw(mut s: &str) -> IResult<&str, Draw> {
-    let mut color = separated_pair(positive_integer, tag(" "), alt((tag("red"), tag("green"), tag("blue"))));
+    let mut color = separated_pair(positive_integer, space1, alt((tag("red"), tag("green"), tag("blue"))));
 
     let mut draw = Draw::default();
     while let Ok((ss, (n, c))) = terminated(&mut color, opt(tag(", ")))(s) {
@@ -64,12 +64,11 @@ fn parse_draw(mut s: &str) -> IResult<&str, Draw> {
 }
 
 fn parse_line(s: &str) -> IResult<&str, Game> {
-    let (s, _) = tag("Game ")(s)?;
     // ignore num, assume ascending numbers. We can trust Eric? Right?
-    let (s, _num) = digit1(s)?;
-    let (s, _) = tag(": ")(s)?;
+    let (s, _num) = delimited(tag("Game "), digit1, tag(": "))(s)?;
 
     let (s, draws) = separated_list1(tag("; "), parse_draw)(s)?;
+
     Ok((s, Game(draws)))
 }
 
