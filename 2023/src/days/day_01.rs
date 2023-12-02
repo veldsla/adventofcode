@@ -6,12 +6,12 @@ branch::alt,
 bytes::complete::{tag, take_while1},
 character::complete::{alpha1, anychar, digit1, line_ending},
 character::is_alphabetic,
-combinator::{cond, map, peek},
+combinator::{all_consuming, map, peek},
 multi::many1,
 sequence::terminated,
 };
 
-use crate::parsers::single_dec_digit;
+use crate::parsers::{single_dec_digit, single_alpha};
 use crate::Problem;
 
 #[derive(Default)]
@@ -22,8 +22,16 @@ pub struct Solution{
 struct CalibData(Vec<Item>);
 
 impl CalibData {
-    fn calib_value(&self) -> u32 {
+    fn calib_value_digits(&self) -> u32 {
         let mut it = self.0.iter().filter(|e| matches!(e, Item::Digit(_n)));
+        let first = it.next().expect("No number in line");
+        let last = it.last().unwrap_or(first);
+
+        first.val() * 10 + last.val()
+    }
+
+    fn calib_value_both(&self) -> u32 {
+        let mut it = self.0.iter();
         let first = it.next().expect("No number in line");
         let last = it.last().unwrap_or(first);
 
@@ -39,8 +47,7 @@ enum Item {
 impl Item {
     fn val(&self) -> u32 {
         match self {
-            Item::Digit(n) => *n,
-            Item::Word(s) => 0,
+            Item::Digit(n)  | Item::Word(n) => *n,
         }
     }
 }
@@ -64,32 +71,39 @@ fn named_digit(s: &str) -> IResult<&str, u32> {
      }
 }
 
-fn parse_line(s: &str) -> IResult<&str, CalibData> {
-    let word = map(alpha1, |s: &str| Item::Word(s.to_owned()));
-    let digit = map(single_dec_digit, |d| Item::Digit(d.to_digit(10).unwrap()));
+fn parse_line(mut s: &str) -> IResult<&str, CalibData> {
+    let mut digits = Vec::new();
+    while !s. is_empty() && peek(line_ending::<&str, nom::error::Error<&str>>)(s).is_err() {
+        if let Ok((_, d)) = named_digit(s) {
+            digits.push(Item::Word(d));
+        } else if let Ok((_, d)) = single_dec_digit(s) {
+            digits.push(Item::Digit(d));
+        }
+        s = &s[1..];
+    }
 
-    map(many1(alt((
-                word,
-                digit
-    ))), |v| CalibData(v))(s)
+    Ok((s, CalibData(digits)))
 }
 
 impl Problem for Solution {
     fn parse(&mut self, s: &str) -> Result<()> {
-        let (s, items) = many1(terminated(parse_line, line_ending))(s).unwrap();
+        let (_s, items) = many1(terminated(parse_line, line_ending))(s).unwrap();
         self.data = items;
         Ok(())
     }
 
     fn part1(&self) -> Result<String> {
        Ok(self.data.iter()
-           .map(|e| e.calib_value())
+           .map(|e| e.calib_value_digits())
            .sum::<u32>()
            .to_string())
     }
 
    fn part2(&self) -> Result<String> {
-       Ok("".to_owned())
+       Ok(self.data.iter()
+           .map(|e| e.calib_value_both())
+           .sum::<u32>()
+           .to_string())
    }
 }
 

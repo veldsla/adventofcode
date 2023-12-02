@@ -57,27 +57,22 @@ pub fn numbers_on_lines(i: &str) -> IResult<&str, Vec<i32>> {
     //separated_list1(line_ending, parse_i32)(i)
 }
 
-pub fn single_dec_digit<T, E: ParseError<T>>(input: T) -> IResult<T, char, E>
-where
-  T: InputIter + InputLength + Slice<RangeFrom<usize>>,
-  <T as InputIter>::Item: AsChar,
-{
-    let mut it = input.iter_indices();
-    match it.next() {
-        None => Err(nom::Err::Error(E::from_error_kind(input, nom::error::ErrorKind::Digit))),
-        Some((idx, c)) => {
-            let c = c.as_char();
-            if c.is_digit(10) {
-                match it.next() {
-                    None => Ok((input.slice(input.input_len()..), c)),
-                    Some((idx, _)) => Ok((input.slice(idx..), c)),
-                }
-            } else {
-                Err(nom::Err::Error(E::from_error_kind(input, nom::error::ErrorKind::Digit)))
-            }
-        },
-
+pub fn single_dec_digit(i: &str) -> IResult<&str, u32> {
+    if let Some(c) = i.chars().nth(0) {
+        if c.is_digit(10) {
+            return Ok((&i[1..], c.to_digit(10).unwrap()))
+        }
     }
+    Err(nom::Err::Error(nom::error::Error::new(i, nom::error::ErrorKind::Digit)))
+}
+
+pub fn single_alpha(i: &str) -> IResult<&str, char> {
+    if let Some(c) = i.chars().nth(0) {
+        if c.is_alpha() {
+            return Ok((&i[1..], c))
+        }
+    }
+    Err(nom::Err::Error(nom::error::Error::new(i, nom::error::ErrorKind::Digit)))
 }
 
 #[cfg(test)]
