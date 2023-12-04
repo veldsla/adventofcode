@@ -6,7 +6,7 @@ use nom::{
     bytes::complete::{tag},
     character::complete::{line_ending, space0, space1},
     combinator::map,
-    multi::{many1, separated_list1},
+    multi::{fold_many1, many1, separated_list1},
     sequence::{delimited, separated_pair, terminated},
     IResult
 };
@@ -21,13 +21,13 @@ pub struct Solution {
 
 struct Card {
     num: u32,
-    list1: HashSet<u32>,
-    list2: HashSet<u32>,
+    list1: u128,
+    list2: u128,
 }
 
 impl Card {
     fn score(&self) -> u32 {
-        let hits = self.matching();
+        let hits = (self.list1 & self.list2).count_ones();
         if hits > 0 {
             2u32.pow(hits - 1)
         } else {
@@ -36,13 +36,15 @@ impl Card {
     }
 
     fn matching(&self) -> u32 {
-        self.list1.intersection(&self.list2).count() as u32
+        (self.list1 & self.list2).count_ones()
     }
 }
 
-fn list(s: &str) -> IResult<&str, HashSet<u32>> {
-    map(separated_list1(space1, positive_integer),
-    |v: Vec<u32>| HashSet::from_iter(v))(s)
+fn list(s: &str) -> IResult<&str, u128> {
+    fold_many1(terminated(positive_integer,space0),
+        || 0u128,
+        |acc, v: u32| acc | (1 << v)
+    )(s)
 }
 
 fn parse_card(s: &str) -> IResult<&str, Card> {
