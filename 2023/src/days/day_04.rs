@@ -42,7 +42,7 @@ impl Card {
 
 fn list(s: &str) -> IResult<&str, HashSet<u32>> {
     map(separated_list1(space1, positive_integer),
-    |v: Vec<u32>| HashSet::from_iter(v.into_iter()))(s)
+    |v: Vec<u32>| HashSet::from_iter(v))(s)
 }
 
 fn parse_card(s: &str) -> IResult<&str, Card> {
@@ -51,7 +51,7 @@ fn parse_card(s: &str) -> IResult<&str, Card> {
         positive_integer,
         terminated(tag(":"), space1))(s)?;
 
-    let (s, (list1, list2)) = separated_pair(&list, delimited(space0, tag("|"), space0), list)(s)?;
+    let (s, (list1, list2)) = separated_pair(list, delimited(space0, tag("|"), space0), list)(s)?;
 
     Ok((s, Card { num, list1, list2 }))
 }
