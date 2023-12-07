@@ -27,14 +27,13 @@ fn main() -> Result<()> {
         run_all()
     } else {
         let now = Utc::now().with_timezone(&FixedOffset::west_opt(5 * 3600).unwrap());
-        //let aoc_start = FixedOffset::west_opt(5 * 3600).unwrap().with_ymd_and_hms(YEAR, 12, 1, 0, 0, 0);
         let aoc_start = Utc.with_ymd_and_hms(YEAR, 12, 1, 0, 0, 0).unwrap().with_timezone(&FixedOffset::west_opt(5 * 3600).unwrap());
         let run_date = if let Some(day) = opt.day {
-            //FixedOffset::west_opt(5 * 3600).unwrap().with_ymd_and_hms(YEAR, 12, day, 0, 0, 0)
-            Utc.with_ymd_and_hms(YEAR, 12, day, 0, 0, 0).unwrap().with_timezone(&FixedOffset::west_opt(5 * 3600).unwrap())
+            Utc.with_ymd_and_hms(YEAR, 12, day, 0, 0, 0).unwrap().with_timezone(&FixedOffset::west_opt(-5 * 3600).unwrap())
         } else {
             now
         };
+        dbg!(&run_date);
 
         if run_date < aoc_start || run_date > now {
             return Err(anyhow!("AoC day is in the future"));
