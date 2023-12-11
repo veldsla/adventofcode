@@ -40,6 +40,12 @@ impl<T> Grid<T> {
         Walker {position: from.into(), dx, dy, max_x:self.dim_x, max_y: self.dim_y, wrap_x, wrap_y }
     }
 
+    pub fn idx_to_coord(&self, idx: usize) -> Coord {
+        let x = (idx % self.dim_x) as isize; 
+        let y = (idx / self.dim_x) as isize;
+        Coord { x , y }
+    }
+
 }
 
 impl<T> Index<Coord> for Grid<T> {
@@ -49,6 +55,15 @@ impl<T> Index<Coord> for Grid<T> {
     fn index(&self, c: Coord) -> &Self::Output {
         let pos = c.x + c.y * self.dim_x as isize;
         &self.elements[usize::try_from(pos).expect("Cannot index negative coords")]
+    }
+}
+
+impl<T> Index<usize> for Grid<T> {
+    type Output = T;
+
+    //FIXME needs better oob check
+    fn index(&self, p: usize) -> &Self::Output {
+        &self.elements[p]
     }
 }
 
@@ -105,6 +120,15 @@ impl Iterator for Walker {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn coords() {
+        let grid = Grid::new(vec![1,1,1,1,1,2,2,2,2,2,3,3,3,3,3], 5, 3);
+        assert_eq!(grid.idx_to_coord(0), (0,0).into());
+        assert_eq!(grid.idx_to_coord(1), (1,0).into());
+        assert_eq!(grid.idx_to_coord(5), (0,1).into());
+        assert_eq!(grid.idx_to_coord(24), (4,4).into());
+    }
 
     #[test]
     fn walk_nowrap() {
