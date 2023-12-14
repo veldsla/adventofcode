@@ -46,6 +46,26 @@ impl<T> Grid<T> {
         Coord { x , y }
     }
 
+    pub fn iter_row(&self, y: usize) -> impl Iterator<Item=&T> {
+        let start = y * self.dim_x;
+        let end = start + self.dim_x;
+        self.elements[start..end].iter()
+    }
+
+    pub fn iter_col(&self, x: usize) -> impl Iterator<Item=&T> {
+        self.elements.iter().skip(x).step_by(self.dim_x)
+    }
+
+}
+
+impl<T> Grid<T> where T: Eq {
+    pub fn compare_rows(&self, row1: usize, row2: usize) -> bool {
+        self.iter_row(row1).zip(self.iter_row(row2)).all(|(a, b)| a == b)
+    }
+
+    pub fn compare_cols(&self, col1: usize, col2: usize) -> bool {
+        self.iter_col(col1).zip(self.iter_col(col2)).all(|(a, b)| a == b)
+    }
 }
 
 impl<T> Index<Coord> for Grid<T> {
@@ -128,6 +148,25 @@ mod tests {
         assert_eq!(grid.idx_to_coord(1), (1,0).into());
         assert_eq!(grid.idx_to_coord(5), (0,1).into());
         assert_eq!(grid.idx_to_coord(24), (4,4).into());
+    }
+
+    #[test]
+    fn iter_row_col() {
+        let grid = Grid::new(vec![1,2,3,4,5,6,7,8,9], 3, 3);
+        assert_eq!(grid.iter_row(0).collect::<Vec<_>>(), vec![&1,&2,&3]);
+        assert_eq!(grid.iter_row(1).collect::<Vec<_>>(), vec![&4,&5,&6]);
+        assert_eq!(grid.iter_row(2).collect::<Vec<_>>(), vec![&7,&8,&9]);
+        assert_eq!(grid.iter_col(0).collect::<Vec<_>>(), vec![&1,&4,&7]);
+        assert_eq!(grid.iter_col(1).collect::<Vec<_>>(), vec![&2,&5,&8]);
+        assert_eq!(grid.iter_col(2).collect::<Vec<_>>(), vec![&3,&6,&9]);
+    }
+
+    #[test]
+    fn compare() {
+        let grid = Grid::new(vec![1,1,1,2,2,2,1,1,1], 3, 3);
+        assert!(grid.compare_rows(0, 2));
+        assert!(!grid.compare_rows(0, 1));
+        assert!(grid.compare_cols(0, 1));
     }
 
     #[test]
