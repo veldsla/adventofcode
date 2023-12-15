@@ -2,10 +2,10 @@ use anyhow::{anyhow, Result};
 use nom::{
     branch::alt,
     bytes::complete::{tag, is_not},
-    character::complete::{alpha1, alphanumeric1, anychar, char, digit1, line_ending},
-    multi::{many1, separated_list1},
-    combinator::{all_consuming, eof, map},
-    sequence::{preceded, separated_pair, terminated, tuple},
+    character::complete::{alpha1, digit1, line_ending},
+    multi::{separated_list1},
+    combinator::{map},
+    sequence::{preceded, terminated, tuple},
     IResult
 };
 
@@ -17,13 +17,12 @@ pub struct Solution {
     data: Vec<String>
 }
 
-type Label = usize;
+type Label = String;
 #[derive(Debug)]
 enum Command {
     Remove(Label),
     Add(Label, u8),
 }
-
 
 fn hash(s: &str) -> usize {
     s.chars().fold(0, |acc, c| {
@@ -40,10 +39,10 @@ fn parse_line(s: &str) -> IResult<&str, Vec<String>> {
 
 fn parse_instruction(s: &str) -> IResult<&str, Command> {
     map(tuple((alpha1, alt((tag("-"), preceded(tag("="), digit1))) )), |(label, command)| {
-        let label = hash(label);
+        //let label = hash(label);
         match command {
-            "-" => Command::Remove(label),
-            d => { eprintln!("d = '{d}'"); Command::Add(label, d.parse().unwrap())}
+            "-" => Command::Remove(label.to_owned()),
+            d => Command::Add(label.to_owned(), d.parse::<u8>().unwrap()),
         }
 
     })(s)
@@ -55,7 +54,6 @@ impl Problem for Solution {
             .map_err(|e| anyhow!("parse error: {e}"))?;
 
         self.data = data;
-        dbg!(&self.data);
         Ok(())
 
     }
@@ -66,12 +64,40 @@ impl Problem for Solution {
 
    fn part2(&self) -> Result<String> {
        let commands: Vec<Command>  = self.data.iter()
-           .inspect(|s| eprintln!("'{s}'"))
            .map(|s| parse_instruction(s.as_str()).unwrap().1)
            .collect();
 
-       dbg!(commands);
-       Ok(0.to_string())
+       let mut boxes: Vec<Vec<(&str, u8)>> = (0..256).map(|_| Vec::new()).collect();
+
+       for command in &commands {
+           match command {
+               Command::Remove(label) => {
+                   let idx = hash(label);
+                   if let Some(pos) = boxes[idx].iter().position(|(l, _)| l == label) {
+                       boxes[idx].remove(pos);
+                   }
+               },
+               Command::Add(label, f) => {
+                   let idx = hash(label);
+                   if let Some(pos) = boxes[idx].iter().position(|(l, _)| l == label) {
+                       boxes[idx][pos] = (label, *f);
+                   } else {
+                       boxes[idx].push((label, *f));
+                   }
+               },
+           }
+       }
+
+       let sum = boxes.into_iter()
+           .enumerate()
+           .map(|(i, v)|  {
+               let bn = i + 1;
+               v.into_iter().enumerate()
+                   .map(|(i, (_, f))| bn as u64 * (i+1) as u64 * f as u64)
+                   .sum::<u64>()
+           }).sum::<u64>();
+
+       Ok(sum.to_string())
    }
 }
 
