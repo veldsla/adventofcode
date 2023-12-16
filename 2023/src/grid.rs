@@ -46,6 +46,11 @@ impl<T> Grid<T> {
         Coord { x , y }
     }
 
+    pub fn coord_to_idx(&self, c: Coord) -> usize {
+        let pos = c.x + c.y * self.dim_x as isize;
+        usize::try_from(pos).expect("Cannot index negative coords")
+    }
+
     pub fn iter_row(&self, y: usize) -> impl Iterator<Item=&T> {
         let start = y * self.dim_x;
         let end = start + self.dim_x;
