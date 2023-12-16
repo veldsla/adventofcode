@@ -1,6 +1,6 @@
 use std::convert::TryFrom;
 use std::fmt;
-use std::ops::{Add, Index};
+use std::ops::{Add, Index, IndexMut};
 
 #[derive(Debug, Clone, Default)]
 pub struct Grid<T> {
@@ -83,6 +83,14 @@ impl<T> Index<Coord> for Grid<T> {
     }
 }
 
+impl<T> IndexMut<Coord> for Grid<T> {
+    //FIXME needs better oob check
+    fn index_mut(&mut self, c: Coord) -> &mut Self::Output {
+        let pos = c.x + c.y * self.dim_x as isize;
+        &mut self.elements[usize::try_from(pos).expect("Cannot index negative coords")]
+    }
+}
+
 impl<T> Index<usize> for Grid<T> {
     type Output = T;
 
@@ -92,11 +100,11 @@ impl<T> Index<usize> for Grid<T> {
     }
 }
 
-impl fmt::Display for Grid<u8> {
+impl<T> fmt::Display for Grid<T> where T: fmt::Display {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result{
         for p in (0..self.elements.len()).step_by(self.dim_x) {
-            for &e in &self.elements[p..p + self.dim_x] {
-                write!(f, "{} ",char::from(e))?;
+            for e in &self.elements[p..p + self.dim_x] {
+                write!(f, "{} ", e)?;
             }
             writeln!(f)?;
         }
