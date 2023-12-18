@@ -9,7 +9,7 @@ pub struct Grid<T> {
     pub elements: Vec<T>
 }
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+#[derive(Debug, Default, Clone, Copy, Eq, PartialEq)]
 pub struct Coord {
     pub x: isize,
     pub y: isize,
@@ -49,6 +49,10 @@ impl<T> Grid<T> {
     pub fn coord_to_idx(&self, c: Coord) -> usize {
         let pos = c.x + c.y * self.dim_x as isize;
         usize::try_from(pos).expect("Cannot index negative coords")
+    }
+
+    pub fn in_bounds(&self, c: Coord) -> bool {
+        c.x >= 0 && c.x < self.dim_x as isize && c.y >= 0 && c.y < self.dim_y as isize
     }
 
     pub fn iter_row(&self, y: usize) -> impl Iterator<Item=&T> {
